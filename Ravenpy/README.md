@@ -1,0 +1,7 @@
+# Ravenpy Workflow (Full Installation)
+- Using Anaconda (recommended)
+	- create an environment => conda create -c conda-forge --name ravenpy
+	- activate the environment => conda activate ravenpy
+	- install ravenpy[gis] (full installation) using conda-forge => conda install -c conda-forge ravenpy[gis]
+- install birdy -> conda install -c conda-forge birdy
+- install geopandas -> conda install geopandas
