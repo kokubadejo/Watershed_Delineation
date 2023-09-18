@@ -22,7 +22,8 @@ def main():
 
     # plot web map
     webmap = shp_gdf.explore("area", legend=True)        # interactive map
-    webmap_file = os.getcwd() + r"\base_map.html"
+    filename = input("Enter filename: ")
+    webmap_file = os.getcwd() + r"\{filename}.html".format(filename=filename)
     webmap.save(webmap_file)
     webbrowser.open(webmap_file)
 

@@ -40,3 +40,5 @@ gdf = geopandas.read_file(feat)
 filename = input("Enter file name: ")
 os.mkdir(filename)
 gdf.to_file(r'{filename}\{filename}.shp'.format(filename=filename))
+
+print("Watershed has been delineated & saved")
