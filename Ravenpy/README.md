@@ -8,3 +8,4 @@
 
 The script is based on the jupyter notebook:
 https://ravenpy.readthedocs.io/en/latest/notebooks/01_Getting_watershed_boundaries.html
+with the added functionality of converting and saving the created geojson boundary file to a shapefile
