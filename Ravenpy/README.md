@@ -5,3 +5,6 @@
 	- install ravenpy[gis] (full installation) using conda-forge => conda install -c conda-forge ravenpy[gis]
 - install birdy -> conda install -c conda-forge birdy
 - install geopandas -> conda install geopandas
+
+The script is based on the jupyter notebook:
+https://ravenpy.readthedocs.io/en/latest/notebooks/01_Getting_watershed_boundaries.html
