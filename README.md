@@ -63,12 +63,21 @@ conda install geopandas
 
 The script is based on the jupyter notebook (https://ravenpy.readthedocs.io/en/latest/notebooks/01_Getting_watershed_boundaries.html) with the added functionality of converting and saving the created geojson boundary file to a shapefile
 
+run the script:
+```
+python ravenpy_delineation.py
+```
+
 #### Notes
 - Each delineation took < 1 minute
 - Grand River -> pourpoint = [-80.15, 43.09]
-- Salmon River -> pourpoint = [-122.66, 54.08]
-- West Arrowwood Creek -> pourpoint = [-113.22, 50.77]
+![Grand_River_ravenpy](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/2da811b9-cab6-4ae6-8c2f-918a0765a6a7)
 
+- Salmon River -> pourpoint = [-122.66, 54.08]
+![Salmon_River_ravenpy](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/aea72910-511d-46bd-b04d-7301fc9462ad)
+
+- West Arrowwood Creek -> pourpoint = [-113.22, 50.77]
+![Arrowwood_ravenpy](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/6835bc76-6f91-489b-a14f-e21d4b290cb9)
 
 ## Common Errors/Warning When Running
 1. FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
