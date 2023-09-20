@@ -1,6 +1,6 @@
 # Watershed_Delineation
 
-## Setup
+## General Setup
 The following steps describe the process to setup the environments and packages needed to run this script (using anaconda):
 1. Install anaconda (https://docs.anaconda.com/free/anaconda/install/index.html)
 2. Create a conda environment with your preferred python version (I used python 3.9) installed and activate it
@@ -39,6 +39,35 @@ conda activate map
 
 python read_plot_shp.py \data\02GB001 02GB001 png
 ```
+### Ravenpy (Full Installation)
+create an environment:
+```
+conda create -c conda-forge --name ravenpy
+```
+activate the environment:
+```
+conda activate ravenpy
+```
+install ravenpy[gis] (full installation) using conda-forge:
+```
+conda install -c conda-forge ravenpy[gis]
+```
+install birdy:
+```
+conda install -c conda-forge birdy
+```
+install geopandas: 
+```
+conda install geopandas
+```
+
+The script is based on the jupyter notebook (https://ravenpy.readthedocs.io/en/latest/notebooks/01_Getting_watershed_boundaries.html) with the added functionality of converting and saving the created geojson boundary file to a shapefile
+
+#### Notes
+- Each delineation took < 1 minute
+- Grand River -> pourpoint = [-80.15, 43.09]
+- Salmon River -> pourpoint = [-122.66, 54.08]
+- West Arrowwood Creek -> pourpoint = [-113.22, 50.77]
 
 
 ## Common Errors/Warning When Running
