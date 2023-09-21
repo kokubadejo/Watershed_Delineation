@@ -26,45 +26,70 @@
 # ------------------------------------------------------------------------------
 import os
 import sys
-
+from pathlib import Path
 import matplotlib.pyplot as plt
+import matplotlib
 import geopandas
+import random
+import folium
 import webbrowser
 # ------------------------------------------------------------------------------
 
-def read_in_shapefile(shp_path=None, shp_name=None):
+def read_in_shapefile(data_dict=None):
     """
     Definition
     ----------
-    def read_in_shapefile(file_path=None)
+    def read_in_shapefile(data_dict=None)
 
     Input       Format      Description
     -----       ------      -----------
-    shp_path    string      The path to the shapefile
-    shp_name    string      The name of the shapefile
+    data_dict   dict        Dictionary with key:value pairs of shapefile name
+                            and path to shapefile
+    Output
+    ------
+    None
 
-    Output      Format      Description
+    Returns      Format      Description
     ------      ------      -----------
-    shp_gdf     gdf         GeoDataFrame of the shapefile
+    shp_gdfs    dict        Dictionary with key:value pairs of path to
+                            shapefile name and GeoDataFrame of the shapefile
 
     """
-    # get shapefile path
-    # shp_path = input("Enter path to shapefile: ")
+    shp_gdfs = dict()
 
-    # while (not os.path.isdir(shp_path)):
-    #     print("No such path exists")
-    #     shp_path = input("Enter path to shapefile: ")
+    for shp in data_dict:
+        gdf = geopandas.read_file(data_dict[shp])
+        #gdf.to_crs(crs=4326)
+        gdf["area"] = gdf.area
+        shp_gdfs[shp] = gdf
 
-    if not os.path.isdir(shp_path):
-        print("Invalid file path. Shapefile not read")
-        return
+    return shp_gdfs
 
-    # read in shapefile
-    shp_gdf = geopandas.read_file(shp_path)
-    shp_gdf["area"] = shp_gdf.area
-    return shp_gdf
+def get_colours(n):
+    """
+    Description
+    -----------
+    get_colours(n) generates a list of n hex colours.
 
-def plot_shp(shapefile=None, plot=None, filename=None):
+    Input       Format      Description
+    -----       ------      -----------
+    n           int         Number of colours to generate
+
+    Output
+    ------
+    None
+
+    Returns     Format      Description
+    -------     ------      -----------
+    colours     list        List of hex colours
+
+    """
+    colours = []
+    for i in range(n):
+        colours.append('#%06X' % random.randint(0, 0xFFFFFF))
+    return colours
+
+def plot_shp(shapefiles=None, plot=None):
     """
     Definition
     ----------
@@ -72,35 +97,77 @@ def plot_shp(shapefile=None, plot=None, filename=None):
 
     Input       Format      Description
     -----       ------      -----------
-    shp_gdf     gdf         GeoDataFrame of the shapefile
-    plot        string      string specifying the output format of the
+    shapefiles  dict        Dictionary with key:value pairs of path to
+                            shapefile name and GeoDataFrame of the shapefile
+
+    plot        string      String specifying the output format of the
                             plotted shapefile.
                             Allowed strings: 'png', 'webmap', 'pdf', 'jpg'
-    filename    string      The name of the shapefile
+
+    Output
+    ------
+    file of the plot (.html/.jpg/.pdf/.png/ file)
+
+    Returns
+    ------
+    None
 
     """
+    n = len(shapefiles)
+    # Generate list of colours
+    colours = get_colours(n)
 
-    # Note for future update:
-        # to plot multiple layers:
-        # fig = gdf1.plot()
-        # gdf2.plot(ax=fig)
-
-    # plot map
+    # Plot map
     if plot in ['png', 'pdf', 'jpg']:
-        fig = shapefile.plot("area", legend=True)  # plain background
-        # plt.show()
-        if plot == 'jpg':
-            plt.savefig(filename + '.jpg')
-        elif plot == 'png':
-            plt.savefig(filename + '.png')
-        else:
-            plt.savefig(filename + '.pdf')
+        # Create plot
+        fig, ax = plt.subplots()
+        layers = []
 
-    # plot web map
+        # Add each shapefile as layer
+        for gdf in shapefiles:
+            # Pick layer colour
+            colour = random.choice(colours)
+            colours.remove(colour)
+            shapefiles[gdf].plot(ax=ax, color=colour)
+
+            layer = matplotlib.patches.Patch(color=colour, label=gdf)
+            layers.append(layer)
+
+        # Add legend
+        ax.legend(title="Legend", handles=layers, fancybox=False,
+                  framealpha=0.25)
+
+        # Save plots
+        if plot == 'jpg':
+            plt.savefig('Figure.jpg')
+
+        elif plot == 'png':
+            plt.savefig('Figure.png')
+
+        else:
+            plt.savefig('Figure.pdf')
+        # plt.show()
+
+    # Plot web map
     elif plot == 'webmap':
-        webmap = shapefile.explore("area", legend=True)  # interactive map
-        # webmap_file = os.getcwd() + r"\{filename}.html".format(shapefile_name=filename)
-        webmap.save(filename + '.html')
+        # Create webmap
+        m = None
+
+        for gdf in shapefiles:
+            # Pick layer colour
+            colour = random.choice(colours)
+            colours.remove(colour)
+
+            m = shapefiles[gdf].explore(column="area", m=m, name=gdf,
+                                        style_kwds={'color': colour,
+                                                    'fillColor': colour},
+                                        legend=False)
+
+        # Add layer control
+        folium.LayerControl().add_to(m)
+
+        # Save map
+        m.save('base_map.html')
         # webbrowser.open(webmap_file)
 
     else:
@@ -108,19 +175,31 @@ def plot_shp(shapefile=None, plot=None, filename=None):
         print("jpg, pdf, png, webmap")
         return
 
-    print("Map Plotted!")
+
 
 def main():
+    # Gather arguments
+    shpfolder_path = sys.argv[1]  # path to directory holding all shapefiles
+    plot = sys.argv[2]  # type of plot to make
 
+    if not os.path.isdir(shpfolder_path):
+        print("Invalid directory")
+        exit()
+
+    # Gather all shapefiles in directory
+    shape_paths = dict()
+    for path in Path(shpfolder_path).rglob('*.shp'):
+        shape_paths[path.name[:-4]] = path.parent
+
+    if shape_paths == {}:
+        print("No shapefiles found")
+        return
+
+    # Run functions
+    shape_gdfs = read_in_shapefile(data_dict=shape_paths)
+    plot_shp(shapefiles=shape_gdfs, plot=plot)
 
     print("Map Plotted!")
 
 if __name__ == "__main__":
-    # Gather arguments
-    shp_path = sys.argv[1]
-    shp_name = sys.argv[2]
-    plot = sys.argv[3]
-
-    # Run functions
-    shpfile = read_in_shapefile(shp_path=shp_path, shp_name=shp_name)
-    plot_shp(shapefile=shpfile, plot=plot, filename=shp_name)
+    main()
