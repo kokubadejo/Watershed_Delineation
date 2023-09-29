@@ -32,6 +32,7 @@ import matplotlib
 import geopandas
 import random
 import folium
+import contextily as cx
 import webbrowser
 # ------------------------------------------------------------------------------
 
@@ -59,7 +60,7 @@ def read_in_shapefile(data_dict=None):
 
     for shp in data_dict:
         gdf = geopandas.read_file(data_dict[shp])
-        #gdf.to_crs(crs=4326)
+        # gdf.to_crs(crs=4326)
         gdf["area"] = gdf.area
         shp_gdfs[shp] = gdf
 
@@ -119,7 +120,12 @@ def plot_shp(shapefiles=None, plot=None):
 
     # Plot map
     if plot in ['png', 'pdf', 'jpg']:
-        # Create plot
+        # Create side-by-side plot
+        # fig, axs = plt.subplots(1, n, figsize=(25, 25))
+        # n -= 1
+        # axs = axs.flatten()
+
+        # Create single plot
         fig, ax = plt.subplots()
         layers = []
 
@@ -128,14 +134,23 @@ def plot_shp(shapefiles=None, plot=None):
             # Pick layer colour
             colour = random.choice(colours)
             colours.remove(colour)
-            shapefiles[gdf].plot(ax=ax, color=colour)
+            shapefiles[gdf].boundary.plot(ax=ax, color=colour)
+
+            # shapefiles[gdf].plot(ax=axs[n], color=colour)
+            # cx.add_basemap(axs[n], crs=crs)
 
             layer = matplotlib.patches.Patch(color=colour, label=gdf)
             layers.append(layer)
+            # n -= 1
+
+        print("add basemap")
+        crs = list(shapefiles.values())[0].crs
+        cx.add_basemap(ax, crs=crs)
+        print("basemap added")
 
         # Add legend
         ax.legend(title="Legend", handles=layers, fancybox=False,
-                  framealpha=0.25)
+                  framealpha=0.45, loc="upper right", fontsize='10')
 
         # Save plots
         if plot == 'jpg':
@@ -182,11 +197,12 @@ def main():
     shpfolder_path = sys.argv[1]  # path to directory holding all shapefiles
     plot = sys.argv[2]  # type of plot to make
 
+    # Verify paths exist
     if not os.path.isdir(shpfolder_path):
         print("Invalid directory")
-        exit()
+        exit(1)
 
-    # Gather all shapefiles in directory
+    # Gather all shapefiles in directory - ENSURE THEY ALL HAVE THE SAME CRS
     shape_paths = dict()
     for path in Path(shpfolder_path).rglob('*.shp'):
         shape_paths[path.name[:-4]] = path.parent
