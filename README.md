@@ -12,8 +12,8 @@ The following steps describe the process to setup the environments and packages 
    conda activate <environment name>
    ```
 
-Note: The example figure was gotten from running the script with the grand river watershed shapefile that can be found in the data folder
-![Figure_1](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/116ff1bb-61fa-4e23-8de3-628b62f3b1be)
+Note: The example figure was gotten from running the script with the grand river watershed shapefiles gotten from manual, ravenpy and the example (Basinmaker?) delineations
+![Figure](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/4a5ebbf9-7019-4281-bf19-4b5d48eee39b)
 
 ## Getting Started
 ### Read_plot_shp.py
@@ -38,6 +38,11 @@ conda install -c conda-forge folium
 ```
 # install matplotlib
 conda install -c conda-forge matplotlib
+```
+
+```
+# install contextily
+conda install -c conda-forge contextily
 ```
 
 ```
