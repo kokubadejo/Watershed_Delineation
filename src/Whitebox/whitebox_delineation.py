@@ -22,7 +22,9 @@
 # SOFTWARE.
 # ---
 
+#-------------------------------------------------------------------------------
 # Imports
+#-------------------------------------------------------------------------------
 import os
 from WhiteboxTools.whitebox_tools import WhiteboxTools
 
@@ -57,6 +59,39 @@ def check_inputs(dem, fldir, pourpoint):
 
     return check
 
+#-------------------------------------------------------------------------------
+# Mosaic Rasters
+#-------------------------------------------------------------------------------
+def mosaic_rasters(wbt, output_dir):
+    """
+    Description
+    -----------
+    mosaic_rasters(wbt, output_dir) mosaicks rasters into one raster
+
+    Input       Format          Description
+    -----       ------          -----------
+    wbt         WhiteboxTool    A whitebox tool instance
+    output_dir   str             The path to the output folder
+
+    Output
+    ------
+    A new raster file
+
+    Returns     Format          Description
+    -------     ------          -----------
+    outfile     file (.tif)     A tif file of the mosaicked raster
+
+    """
+    outfile = os.path.join(output_dir, "mosaic_rast.tif")
+    if wbt.mosaic(
+            output=outfile,
+            method="nn"
+    ) != 0:
+        # Non-zero returns indicate an error.
+        print('ERROR running mosaic')
+
+    print("Complete!")
+    return outfile
 
 #-------------------------------------------------------------------------------
 # Delineate Watershed
@@ -93,7 +128,7 @@ def whitebox_delineate(wbt, dem, fldir, pourpoint, output_dir):
 
     """
     print("Validating input files")
-    if check_inputs(dem, fldir, pourpoint) == False:
+    if not check_inputs(dem, fldir, pourpoint):
         print("Must have a pourpoint point shapefile and one of dem or flow "
               "direction raster!")
         exit(1)
@@ -105,8 +140,9 @@ def whitebox_delineate(wbt, dem, fldir, pourpoint, output_dir):
         filled_dem = os.path.join(output_dir, 'filled_dem.tif')
 
         if not os.path.isfile(filled_dem):
-            wbt.breach_depressions_least_cost(dem=dem, output=filled_dem, dist=1000,
-                                              fill=True)
+            wbt.breach_depressions_least_cost(dem=dem, output=filled_dem,
+                                              dist=1000, fill=True)
+
         # Create flow direction raster
         print("Creating flow direction raster")
         fldir = os.path.join(output_dir, 'flow_direction.tif')
@@ -132,7 +168,7 @@ def whitebox_delineate(wbt, dem, fldir, pourpoint, output_dir):
 
     # Snap pour points
     print("Snapping pourpoints")
-    if os.path.isdir(os.path.join(output_dir, 'snapped_pourpoint')) != True:
+    if not os.path.isdir(os.path.join(output_dir, 'snapped_pourpoint')):
         os.mkdir(os.path.join(output_dir, 'snapped_pourpoint'))     # create folder
 
     snapped_pourpoint = os.path.join(output_dir,
@@ -145,18 +181,20 @@ def whitebox_delineate(wbt, dem, fldir, pourpoint, output_dir):
     # Delineate
     print("Delineating watershed")
     watershed_r = os.path.join(output_dir, 'watershed.tif')
-    wbt.watershed(d8_pntr=fldir, pour_pts=snapped_pourpoint,
-                  output=watershed_r, esri_pntr=True)
+    wbt.watershed(d8_pntr=fldir, pour_pts=snapped_pourpoint, output=watershed_r,
+                  esri_pntr=True)
 
     # Polygonize
     print("Polygonizing watershed raster")
-    if os.path.isdir(os.path.join(output_dir, 'watershed')) != True:
+    if not os.path.isdir(os.path.join(output_dir, 'watershed')):
         os.mkdir(os.path.join(output_dir, 'watershed'))     # create folder
 
     watershed_p = os.path.join(output_dir, 'watershed/watershed.shp')
     wbt.raster_to_vector_polygons(i=watershed_r, output=watershed_p)
 
-
+#-------------------------------------------------------------------------------
+# Run Program
+#-------------------------------------------------------------------------------
 def main():
     # Create WhiteboxTools instance
     wbt = WhiteboxTools()
@@ -164,34 +202,51 @@ def main():
     # Setup directories
     indir = os.path.join(os.getcwd(), 'data')
     outdir = os.path.join(os.getcwd(), 'output')
+    dem = ''
+    fldir = ''
 
-    if os.path.isdir(outdir) != True:
+    if not os.path.isdir(outdir):
         os.mkdir(outdir)     # create folder
 
     # Set working directory
     wbt.set_working_dir(indir)
 
-    # wbt.set_verbose_mode(False)
     wbt.set_compress_rasters(True)
+
+    # Suppress messages
+    wbt.set_verbose_mode(True)
+
+    ## Mosaicking Rasters
+    ##  If you have multiple dem rasters and wish to join them to use,
+    ## uncomment one line from this section and comment out the dem & fldir
+    ## variables in the Data parameters section.
+    ## Note: if using the mosaic, only one type of these rasters must be in
+    ## the working directory (exclusively either dem rasters or flow direction
+    ## rasters)
+    # dem = mosaic_rasters(wbt, outdir)
+    # fldir = mosaic_rasters(wbt, outdir)
 
     # Data parameters
     # PLEASE ADD YOUR DATA
-    dem = 'EnforcedDEM.tif' # relative path to dem (if any)
-    fldir = ""          # relative path to flow direction raster (if any)
+    dem = 'n50w120_dem.tif'        # relative path to dem (if any)
+    fldir = ''          # relative path to flow direction raster
+    # (if any)
     pourpoint_csv = "basins.csv" # relative path to pourpoint csv file
 
     # Run function
     print("Converting pour point csv to vector data")
 
-    if os.path.isdir(os.path.join(indir, 'pourpoint')) != True:
+    if not os.path.isdir(os.path.join(indir, 'pourpoint')):
         os.mkdir(os.path.join(indir, 'pourpoint'))     # create folder
 
     pourpoint = os.path.join(indir, 'pourpoint/pourpoint.shp')
     # 0 = first field, 1 = second field, and so on
-    wbt.csv_points_to_vector(i=pourpoint_csv, output=pourpoint, xfield=2,
-                             yfield=1, epsg=4326)
+    if not os.path.isfile(pourpoint):
+        wbt.csv_points_to_vector(i=pourpoint_csv, output=pourpoint, xfield=2,
+                                 yfield=1, epsg=4326)
 
     print("Running delineation function")
+
     whitebox_delineate(wbt, dem, fldir, pourpoint, outdir)
 
     print("Your watershed has been delineated")
