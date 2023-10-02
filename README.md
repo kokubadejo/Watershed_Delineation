@@ -110,8 +110,15 @@ python ravenpy_delineation.py
   - the input files must have the same coordinate reference system
   - must have python3
   - multiple pourpoints would give a Multipolygon result
+    ![Figure](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/d2c14f47-0aac-44d3-9078-60ece5d8a817)
+
   - depending on the size of the dem/flow direction raster, time to run = 10 - 20 minutes
   - input fldir must be a d8 flow direction raster using the ESRI scheme
+
+## Delineation Results
+![Grand_River](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/7f588849-a709-48c8-9a6f-3c7604d77424)
+![Salmon_River](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/8c66569e-0955-4a2b-b29d-39793e39d8b5)
+![Arrowwood_Creek](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/088365f3-dce4-42ab-9a63-6fb421c1d63e)
 
 ## Common Errors/Warning When Running
 1.
