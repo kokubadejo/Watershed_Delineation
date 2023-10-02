@@ -115,6 +115,29 @@ python ravenpy_delineation.py
   - depending on the size of the dem/flow direction raster, time to run = 10 - 20 minutes
   - input fldir must be a d8 flow direction raster using the ESRI scheme
 
+## MgHydro's Delineator
+- this tool was created by [Matthew Heberger](https://mghydro.com/)
+- download the [repository](https://github.com/mheberger/delineator) and follow these [instructions](https://github.com/mheberger/delineator#readme) to download the necessary data
+  - [Download MERIT-Basins vector data](https://www.reachhydro.org/home/params/merit-basins)
+  - [Download simplified MERIT-Basins data](https://mghydro.com/watersheds/share/catchments_simplified.zip)
+- edit the config.py file according to where your data is located
+- create a python virtual environment and activate it:
+  ```
+  pyenv virtualenv <python_version> <environment_name>
+  pyenv activate <environment_name>
+  ```
+- install all the requirements
+  ```
+  $ pip install -r requirements.txt
+  ```
+- navigate to the directory of python script and run the tool:
+  ```
+  cd \PATH\TO\SCRIPT
+  python delineate.py
+  ```
+- All these instructions can be found in [mheberger's delineator repository on github](https://github.com/mheberger/delineator)
+- Note: To keep things consistent, the [Hydrosheds](https://www.hydrosheds.org/hydrosheds-core-downloads) dem and accumulation rasters were used instead of the [MERIT products](https://mghydro.com/watersheds/rasters/)
+
 ## Delineation Results
 ![Grand_River](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/7f588849-a709-48c8-9a6f-3c7604d77424)
 ![Salmon_River](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/8c66569e-0955-4a2b-b29d-39793e39d8b5)
