@@ -1,8 +1,8 @@
 # Watershed_Delineation
-
+Note: DEMs and flow direction rasters can be downloaded from the [HydroSheds products](https://www.hydrosheds.org/hydrosheds-core-downloads)
 ## General Setup
 The following steps describe the process to setup the environments and packages needed to run this script (using anaconda):
-1. Install anaconda (https://docs.anaconda.com/free/anaconda/install/index.html)
+1. Install [Anaconda](https://docs.anaconda.com/free/anaconda/install/index.html)
 2. Create a conda environment with your preferred python version (I used python 3.9) installed and activate it
    ```
    conda create --name <environment name> python=3.9
@@ -76,7 +76,7 @@ install geopandas:
 conda install geopandas
 ```
 
-The script is based on the jupyter notebook (https://ravenpy.readthedocs.io/en/latest/notebooks/01_Getting_watershed_boundaries.html) with the added functionality of converting and saving the created geojson boundary file to a shapefile
+The script is based on the [jupyter notebook](https://ravenpy.readthedocs.io/en/latest/notebooks/01_Getting_watershed_boundaries.html) with the added functionality of converting and saving the created geojson boundary file to a shapefile
 
 run the script:
 ```
@@ -93,6 +93,25 @@ python ravenpy_delineation.py
 
 - West Arrowwood Creek -> pourpoint = [-113.22, 50.77]
 ![Arrowwood_ravenpy](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/6835bc76-6f91-489b-a14f-e21d4b290cb9)
+
+### Whitebox
+- download and unzip the toolbox from [Whitebox Geospatial Inc.](https://www.whiteboxgeo.com/download-whiteboxtools/)
+- read the [setup documentation](https://www.whiteboxgeo.com/manual/wbt_book/install.html)
+- the whitebox_delineation.py script must be run from the parent directory of the unzipped toolbox
+- the toolbox folder name must match the import (i.e if the folder is called WBT, then change the import to:
+  - ```from WBT.whitebox_tools import WhiteboxTools```
+- installs (can be done in a conda environment):
+  ```
+  # install anaconda package
+  conda install -c conda-forge whitebox_tools
+  ```
+  
+- Note:
+  - the input files must have the same coordinate reference system
+  - must have python3
+  - multiple pourpoints would give a Multipolygon result
+  - depending on the size of the dem/flow direction raster, time to run = 10 - 20 minutes
+  - input fldir must be a d8 flow direction raster using the ESRI scheme
 
 ## Common Errors/Warning When Running
 1.
