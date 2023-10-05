@@ -34,16 +34,17 @@ import os
 #-------------------------------------------------------------------------------
 # Delineate Watershed
 #-------------------------------------------------------------------------------
-def delineate(dem='', output_dir="output"):
+def delineate(dem='', output_dir="output", basins=''):
     """
     Description
     -----------
-    delineate(dem, output_dir) delineates watersheds
+    delineate(dem, output_dir, basins) delineates watersheds
 
     Input           Format          Description
     -----           ------          -----------
     dem             str             The path to the dem
     output_dir      str             The path to the output folder
+    basins          str             The path the basins/pourpoints csv
 
     Output          Format          Description
     ------          ------          -----------
@@ -112,7 +113,6 @@ def delineate(dem='', output_dir="output"):
     # ---------------------
     # Specify pour point
     print("Specify pour point")
-    basins = pd.read_csv("data/basins.csv")         # path to csv of pour points
     lats = basins['lat'].tolist()
     lons = basins['lon'].tolist()
     ids = basins['id'].tolist()
@@ -171,8 +171,9 @@ def main():
     if not os.path.isdir(output):
         os.mkdir(output)
 
+    basins = pd.read_csv("{}/basins.csv".format(input))  # path to csv of pour points
     dem = "data/n40w090_dem.tif"
-    delineate(dem, output)
+    delineate(dem, output, basins)
 
 if __name__ == "__main__":
     main()
