@@ -145,7 +145,7 @@ def plot_shp(shapefiles=None, plot=None):
 
         print("add basemap")
         crs = list(shapefiles.values())[0].crs
-        cx.add_basemap(ax, crs=crs)
+        cx.add_basemap(ax, crs=crs, source=cx.providers.OpenStreetMap.Mapnik)
         print("basemap added")
 
         # Add legend
