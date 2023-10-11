@@ -11,6 +11,10 @@ The following steps describe the process to setup the environments and packages 
    ```
    conda activate <environment name>
    ```
+3. Install dependencies and packages (if this step is done, you can ignore subsequent package installs mentioned in this      document.
+   ```
+   conda install --file requirements.txt
+   ```
 
 Note: The example figure was gotten from running the script with the grand river watershed shapefiles gotten from manual, ravenpy and the example (Basinmaker?) delineations
 ![Figure](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/4a5ebbf9-7019-4281-bf19-4b5d48eee39b)
