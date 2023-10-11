@@ -138,10 +138,28 @@ python ravenpy_delineation.py
 - All these instructions can be found in [mheberger's delineator repository on github](https://github.com/mheberger/delineator)
 - Note: To keep things consistent, the [Hydrosheds](https://www.hydrosheds.org/hydrosheds-core-downloads) dem and accumulation rasters were used instead of the [MERIT products](https://mghydro.com/watersheds/rasters/)
 
+
+## Rabpro
+- install the rabpro package in a virtual environment
+  ```
+  conda install rabpro -c conda-forge
+  ```
+- navigate to the working directory (folder with script)
+  ```
+  cd path\to\script
+  ```
+- run the script:
+  ```
+  python ravenpy_delineation.py
+  ```
+- to download MERIT data, fill out this [google form](https://docs.google.com/forms/d/e/1FAIpQLSeguQvFq0L4Afm2nrjjBnNaw6jKyUHA97Li6HGqL84JKLFV8A/viewform) to obtain a username and password
+- more information on installation and functionality can be found on the [Rabpro github](https://veinsoftheearth.github.io/rabpro/index.html)
+  
+
 ## Delineation Results
-![Grand_River](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/7f588849-a709-48c8-9a6f-3c7604d77424)
-![Salmon_River](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/8c66569e-0955-4a2b-b29d-39793e39d8b5)
-![Arrowwood_Creek](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/088365f3-dce4-42ab-9a63-6fb421c1d63e)
+![Grand_River (2)](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/f619b3d3-5466-4fe4-b447-3b20d05f5aa8)
+![Salmon_River (2)](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/0dd4eef5-8042-4af4-a503-b21aa46d461a)
+![Arrowwood_Creek (2)](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/d4a7025c-ebb2-412d-8320-5a9e9f432914)
 
 ## Common Errors/Warning When Running
 1.
@@ -159,3 +177,14 @@ python ravenpy_delineation.py
      if isinstance(values.dtype, CategoricalDtype):
      ```
    - similar issue with explore.py (same fix)
+
+2. 
+   ```
+   AttributeError: 'NoneType' object has no attribute 'to_file'
+   Could not find a suitable flowline to map given coordinate and DA. No basin can be delineated. You can set da=None to      force an attempt with HydroBASINS.
+   ```
+   - This means there was an issue delineating the watershed, most likely due to the da size.
+   - Play around with this arfument in the profiler function call (line 66)
+     ```
+     rpo = rabpro.profiler(coords, name=name, da=500)        # play around with the da
+     ```
