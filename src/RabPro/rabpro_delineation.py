@@ -34,6 +34,29 @@ import geopandas as gpd
 # PLEASE NOTE: Downloading HydroBasin & Merit data only needs to be done once
 
 def delineate(coords=None, name='', method='hydrobasins'):
+    """
+        Definition
+        ----------
+        def delineate(coords, name, method) delineates watersheds according to the method specified
+
+        Input       Format      Description
+        -----       ------      -----------
+        coords      pair        Pair of x,y coordinates
+        name        string      The name of the watershed
+        method      string      Source data for delineating watershed
+                                one of:
+                                - MERIT
+                                - HydroBasins
+
+        Output
+        ------
+        shapefile and json of the watersheds
+
+        Returns
+        ------
+        None
+
+        """
     if method == 'hydrobasins':
         # HydroBasins
         # from rabpro import data_utils
@@ -72,7 +95,6 @@ def delineate(coords=None, name='', method='hydrobasins'):
         exit(1)
 
     rpo.delineate_basin(force_merit=True)
-
     rpo.export("watershed")
 
 
@@ -86,7 +108,7 @@ def main():
     lons = basins['lon'].tolist()
     ids = basins['id'].tolist()
     # method = input("Pick a method (merit/hydrobasins): ")
-    method = 'merit'
+    method = 'merit'        ## Edit this to your method
 
     # Delineate each pour point
     for index in range(0, len(lats)):

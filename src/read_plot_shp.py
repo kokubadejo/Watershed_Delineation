@@ -94,7 +94,7 @@ def plot_shp(shapefiles=None, plot=None):
     """
     Definition
     ----------
-    def plot_shp(shapefile=None) plots the
+    def plot_shp(shapefile=None) plots the shapefiles in the provided directory
 
     Input       Format      Description
     -----       ------      -----------
