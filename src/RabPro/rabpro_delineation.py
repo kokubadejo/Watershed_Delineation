@@ -63,14 +63,14 @@ def delineate(coords=None, name='', method='hydrobasins'):
         # data_utils.download_hydrobasins()
         rpo = rabpro.profiler(coords, name=name)
     elif method == 'merit':
-        rpo = rabpro.profiler(coords, name=name, da=200)        # play around with the da
+        rpo = rabpro.profiler(coords, name=name, da=500)        # play around with the da
         # MERIT
         datapaths = rabpro.utils.get_datapaths()
         from rabpro import data_utils
         merit_tile = rabpro.utils.coords_to_merit_tile(coords[1], coords[0])
         print(merit_tile, datapaths)
-        username = 'hydrography'
-        password = 'rivernetwork'
+        username = '*****'      # enter username
+        password = '*****'      # enter password
 
         merit_file = merit_tile
         if coords[1] < 100:
