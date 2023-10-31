@@ -153,7 +153,7 @@ def delineate(dem='', output_dir="output", basins='', id_field="id"):
 
         print("Polygonizing watershed")
         for shape, value in grid.polygonize(nodata=grid.nodata):
-            watersheds.append((shape, value,))
+            watersheds.append((shape, value))
 
     print("Writing to shapefile")
     # Specify schema
