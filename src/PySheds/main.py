@@ -29,12 +29,13 @@ from pysheds.grid import Grid
 # import numpy as np
 import fiona
 import pandas as pd
+import geopandas as gpd
 import os
 
 #-------------------------------------------------------------------------------
 # Delineate Watershed
 #-------------------------------------------------------------------------------
-def delineate(dem='', output_dir="output", basins=''):
+def delineate(dem='', output_dir="output", basins='', id_field="id"):
     """
     Description
     -----------
@@ -44,7 +45,8 @@ def delineate(dem='', output_dir="output", basins=''):
     -----           ------          -----------
     dem             str             The path to the dem
     output_dir      str             The path to the output folder
-    basins          str             The path the basins/pourpoints csv
+    basins          DataFrame       Pour point DataFrame or GeoDataFrame..
+    id_field        str             Station ID field name.
 
     Output          Format          Description
     ------          ------          -----------
@@ -113,15 +115,24 @@ def delineate(dem='', output_dir="output", basins=''):
     # ---------------------
     # Specify pour point
     print("Specify pour point")
-    lats = basins['lat'].tolist()
-    lons = basins['lon'].tolist()
-    ids = basins['id'].tolist()
+    
+    if type(basins) is pd.DataFrame:
+        lats = basins['lat'].tolist()
+        lons = basins['lon'].tolist()
+        ids = basins['id'].tolist()
+    elif type(basins) is gpd.GeoDataFrame:
+        lats = basins.geometry.y
+        lons = basins.geometry.x
+        ids = basins[id_field].
     # x, y = -80.15, 43.09
+    
+    watersheds = []
 
     for index in range(0, len(lats)):
         x = lons[index]
         y = lats[index]
         id = ids[index]
+        
         print("lon: {} lat: {} id: {}".format(x, y, id))
         basin_dir = "{}/{}".format(output_dir, id)
         if not os.path.isdir(basin_dir):
@@ -141,25 +152,26 @@ def delineate(dem='', output_dir="output", basins=''):
         grid.clip_to(catch)
 
         print("Polygonizing watershed")
-        watershed = grid.polygonize(nodata=grid.nodata)
+        for shape, value in grid.polygonize(nodata=grid.nodata):
+            watersheds.append((shape, value,))
 
-        print("Writing to shapefile")
-        # Specify schema
-        schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16'}}
+    print("Writing to shapefile")
+    # Specify schema
+    schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16'}}
 
-        # Write shapefile
-        with fiona.open(r'{}\{}\{}.shp'.format(output_dir, id, id), 'w',
-                        driver='ESRI Shapefile',
-                        crs=grid.crs.srs,
-                        schema=schema) as c:
-            i = 0
-            for shape, value in watershed:
-                rec = {}
-                rec['geometry'] = shape
-                rec['properties'] = {'LABEL' : str(value)}
-                rec['id'] = str(i)
-                c.write(rec)
-                i += 1
+    # Write shapefile
+    with fiona.open(f'{output_dir}\watersheds.shp', 'w',
+                    driver='ESRI Shapefile',
+                    crs=grid.crs.srs,
+                    schema=schema) as c:
+        i = 0
+        for shape, value in watersheds:
+            rec = {}
+            rec['geometry'] = shape
+            rec['properties'] = {'LABEL' : str(value)}
+            rec['id'] = str(i)
+            c.write(rec)
+            i += 1
 
 
 #-------------------------------------------------------------------------------
