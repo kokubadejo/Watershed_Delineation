@@ -121,9 +121,9 @@ def delineate(dem='', output_dir="output", basins=None, id_field="id"):
         lons = basins['lon'].tolist()
         ids = basins['id'].tolist()
     elif type(basins) is gpd.GeoDataFrame:
-        lats = basins.geometry.y
-        lons = basins.geometry.x
-        ids = basins[id_field].
+        lats = basins.geometry.y.tolist()
+        lons = basins.geometry.x.tolist()
+        ids = basins[id_field].tolist()
     # x, y = -80.15, 43.09
     
     watersheds = []
