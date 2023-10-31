@@ -11,7 +11,12 @@ The following steps describe the process to setup the environments and packages 
    ```
    conda activate <environment name>
    ```
-3. Install dependencies and packages (if this step is done, you can ignore subsequent package installs mentioned in this      document.
+
+3. Add conda-forge channel if not added already:
+   ```
+   conda config --add channels conda-forge
+   ```
+5. Install dependencies and packages (if this step is done, you can ignore subsequent package installs mentioned in this      document.
    ```
    conda install --file requirements.txt
    ```
@@ -142,6 +147,17 @@ python ravenpy_delineation.py
 - All these instructions can be found in [mheberger's delineator repository on github](https://github.com/mheberger/delineator)
 - Note: To keep things consistent, the [Hydrosheds](https://www.hydrosheds.org/hydrosheds-core-downloads) dem and accumulation rasters were used instead of the [MERIT products](https://mghydro.com/watersheds/rasters/)
 
+### Pysheds
+- install the pyshed package
+  ```
+  conda install pysheds
+  ```
+- install fiona
+  ```
+  conda install -c conda-forge fiona
+  ```
+- Note
+  - replace the dem and basin files with your path and filenames
 
 ## Rabpro
 - install the rabpro package in a virtual environment
