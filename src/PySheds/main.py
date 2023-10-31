@@ -35,7 +35,7 @@ import os
 #-------------------------------------------------------------------------------
 # Delineate Watershed
 #-------------------------------------------------------------------------------
-def delineate(dem='', output_dir="output", basins='', id_field="id"):
+def delineate(dem='', output_dir="output", basins=None, id_field="id"):
     """
     Description
     -----------
