@@ -124,7 +124,7 @@ python ravenpy_delineation.py
   - depending on the size of the dem/flow direction raster, time to run = 10 - 20 minutes
   - input fldir must be a d8 flow direction raster using the ESRI scheme
 
-## MgHydro's Delineator
+### MgHydro's Delineator
 - this tool was created by [Matthew Heberger](https://mghydro.com/)
 - download the [repository](https://github.com/mheberger/delineator) and follow these [instructions](https://github.com/mheberger/delineator#readme) to download the necessary data
   - [Download MERIT-Basins vector data](https://www.reachhydro.org/home/params/merit-basins)
@@ -159,7 +159,7 @@ python ravenpy_delineation.py
 - Note
   - replace the dem and basin files with your path and filenames
 
-## Rabpro
+### Rabpro
 - install the rabpro package in a virtual environment
   ```
   conda install rabpro -c conda-forge
