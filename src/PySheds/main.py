@@ -141,7 +141,7 @@ def delineate(dem='', output_dir="output", basins=None, id_field="id"):
         catch = grid.catchment(x=x_snap, y=y_snap, fdir=fdir, xytype='coordinate')
         catch_view = grid.view(catch, dtype=np.uint8)
         
-        for shape, value in grid.polygonize(catch_view):
+        for shape, value in grid.polygonize(catch_view, nodata=catch_view.nodata):
             watersheds.append((shape, value, st_id))
 
     print("Writing to shapefile")
