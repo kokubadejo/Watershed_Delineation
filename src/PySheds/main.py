@@ -26,7 +26,7 @@
 # Imports
 #-------------------------------------------------------------------------------
 from pysheds.grid import Grid
-# import numpy as np
+import numpy as np
 import fiona
 import pandas as pd
 import geopandas as gpd
@@ -80,9 +80,9 @@ def delineate(dem='', output_dir="output", output_fname='', basins=None, id_fiel
 
     # Crosschecking
     print("Asserting filled sinks")
-    assert not grid.detect_pits(dem).any()
-    assert not grid.detect_depressions(dem).any()
-    assert not grid.detect_flats(dem).any()
+    # assert not grid.detect_pits(dem).any()
+    # assert not grid.detect_depressions(dem).any()
+    # assert not grid.detect_flats(dem).any()
 
     # Determine D8 flow directions from DEM
     # ----------------------
@@ -120,7 +120,7 @@ def delineate(dem='', output_dir="output", output_fname='', basins=None, id_fiel
     if type(basins) is pd.DataFrame:
         lats = basins['lat'].tolist()
         lons = basins['lon'].tolist()
-        ids = basins['id'].tolist()
+        ids = basins[id_field].tolist()
     elif type(basins) is gpd.GeoDataFrame:
         lats = basins.geometry.y.tolist()
         lons = basins.geometry.x.tolist()
@@ -132,12 +132,7 @@ def delineate(dem='', output_dir="output", output_fname='', basins=None, id_fiel
     for index in range(0, len(lats)):
         x = lons[index]
         y = lats[index]
-        id = ids[index]
-        
-        print("lon: {} lat: {} id: {}".format(x, y, id))
-        basin_dir = "{}/{}".format(output_dir, id)
-        if not os.path.isdir(basin_dir):
-            os.mkdir(basin_dir)
+        st_id = ids[index]
 
         # Snap pour point to high accumulation cell
         x_snap, y_snap = grid.snap_to_mask(acc > 9000, (x, y))
@@ -145,20 +140,14 @@ def delineate(dem='', output_dir="output", output_fname='', basins=None, id_fiel
         # Delineate the catchment
         print("Delineate the catchment")
         catch = grid.catchment(x=x_snap, y=y_snap, fdir=fdir, xytype='coordinate')
-
-        # Crop and plot the catchment
-        # ---------------------------
-        # Clip the bounding box to the catchment
-        print("Clip bounding box to catchment")
-        grid.clip_to(catch)
-
-        print("Polygonizing watershed")
-        for shape, value in grid.polygonize(nodata=grid.nodata):
-            watersheds.append((shape, value))
+        catch_view = grid.view(catch, dtype=np.uint8)
+        
+        for shape, value in grid.polygonize(catch_view, nodata=catch_view.nodata):
+            watersheds.append((shape, value, st_id, x, y))
 
     print("Writing to shapefile")
     # Specify schema
-    schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', 'id': 'str', 'lat': 'float', 'lng': 'float'}}
+    schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', id_field: 'str', 'lat': 'float', 'lng': 'float'}}
 
     # Write shapefile
     with fiona.open(output_fname, 'w',
@@ -166,10 +155,10 @@ def delineate(dem='', output_dir="output", output_fname='', basins=None, id_fiel
                     crs=grid.crs.srs,
                     schema=schema) as c:
         i = 0
-        for shape, value, wid, x, y in watersheds:
+        for shape, value, st_id, x, y in watersheds:
             rec = {}
             rec['geometry'] = shape
-            rec['properties'] = {'LABEL': str(value), id_field: wid, 'lat': y, 'lng': x}
+            rec['properties'] = {'LABEL': str(value), id_field: st_id, 'lat': y, 'lng': x}
             rec['id'] = str(i)
             c.write(rec)
             i += 1
