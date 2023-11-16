@@ -11,7 +11,12 @@ The following steps describe the process to setup the environments and packages 
    ```
    conda activate <environment name>
    ```
-3. Install dependencies and packages (if this step is done, you can ignore subsequent package installs mentioned in this      document.
+
+3. Add conda-forge channel if not added already:
+   ```
+   conda config --add channels conda-forge
+   ```
+5. Install dependencies and packages (if this step is done, you can ignore subsequent package installs mentioned in this      document.
    ```
    conda install --file requirements.txt
    ```
@@ -119,7 +124,7 @@ python ravenpy_delineation.py
   - depending on the size of the dem/flow direction raster, time to run = 10 - 20 minutes
   - input fldir must be a d8 flow direction raster using the ESRI scheme
 
-## MgHydro's Delineator
+### MgHydro's Delineator
 - this tool was created by [Matthew Heberger](https://mghydro.com/)
 - download the [repository](https://github.com/mheberger/delineator) and follow these [instructions](https://github.com/mheberger/delineator#readme) to download the necessary data
   - [Download MERIT-Basins vector data](https://www.reachhydro.org/home/params/merit-basins)
@@ -142,8 +147,19 @@ python ravenpy_delineation.py
 - All these instructions can be found in [mheberger's delineator repository on github](https://github.com/mheberger/delineator)
 - Note: To keep things consistent, the [Hydrosheds](https://www.hydrosheds.org/hydrosheds-core-downloads) dem and accumulation rasters were used instead of the [MERIT products](https://mghydro.com/watersheds/rasters/)
 
+### Pysheds
+- install the pyshed package
+  ```
+  conda install pysheds
+  ```
+- install fiona
+  ```
+  conda install -c conda-forge fiona
+  ```
+- Note
+  - replace the dem and basin files with your path and filenames
 
-## Rabpro
+### Rabpro
 - install the rabpro package in a virtual environment
   ```
   conda install rabpro -c conda-forge
