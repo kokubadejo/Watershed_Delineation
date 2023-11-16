@@ -35,7 +35,7 @@ import os
 #-------------------------------------------------------------------------------
 # Delineate Watershed
 #-------------------------------------------------------------------------------
-def delineate(dem='', output_dir="output", output_fname='', basins=None, id_field="id"):
+def delineate(fldir_file='', flacc_file='', output_dir="output", output_fname='', basins=None, id_field="id"):
     """
     Description
     -----------
@@ -43,7 +43,8 @@ def delineate(dem='', output_dir="output", output_fname='', basins=None, id_fiel
 
     Input           Format          Description
     -----           ------          -----------
-    dem             str             The path to the dem
+    fldir_file      str             The path to the flow direction raster
+    flacc_file      str             The path to the flow accumulation raster
     output_dir      str             The path to the output folder
     output_fname    str             The path to the output file
     basins          DataFrame       Pour point DataFrame or GeoDataFrame..
@@ -58,60 +59,62 @@ def delineate(dem='', output_dir="output", output_fname='', basins=None, id_fiel
     None
 
     """
-    # Read elevation raster
-    # ----------------------------
-    print("Read elevation raster")
-    grid = Grid.from_raster(dem, nodata=-9999)
-    dem = grid.read_raster(dem, nodata=grid.nodata)
-
-    # Condition DEM
-    # ----------------------
-    # Fill pits in DEM
-    print("Filling pits")
-    dem = grid.fill_pits(dem)
-
-    # Fill depressions in DEM
-    print("Filling depressions")
-    dem = grid.fill_depressions(dem)
-
-    # Resolve flats in DEM
-    print("Resolving flats")
-    dem = grid.resolve_flats(dem)
-
-    # Crosschecking
-    print("Asserting filled sinks")
-    # assert not grid.detect_pits(dem).any()
-    # assert not grid.detect_depressions(dem).any()
-    # assert not grid.detect_flats(dem).any()
-
-    # Determine D8 flow directions from DEM
-    # ----------------------
-    # Specify directional mapping
-
-    # print("Specify directional mapping")
-    # dirmap = (64, 128, 1, 2, 4, 8, 16, 32)
-
-    # Cardinal and intercardinal directions are represented by numeric values in
-    # the output grid. By default, the ESRI scheme is used:
-            # North: 64
-            # Northeast: 128
-            # East: 1
-            # Southeast: 2
-            # South: 4
-            # Southwest: 8
-            # West: 16
-            # Northwest: 32
+    # # Read elevation raster
+    # # ----------------------------
+    # print("Read elevation raster")
+    # grid = Grid.from_raster(dem, nodata=-9999)
+    # dem = grid.read_raster(dem, nodata=grid.nodata)
+    #
+    # # Condition DEM
+    # # ----------------------
+    # # Fill pits in DEM
+    # print("Filling pits")
+    # dem = grid.fill_pits(dem)
+    #
+    # # Fill depressions in DEM
+    # print("Filling depressions")
+    # dem = grid.fill_depressions(dem)
+    #
+    # # Resolve flats in DEM
+    # print("Resolving flats")
+    # dem = grid.resolve_flats(dem)
+    #
+    # # Crosschecking
+    # print("Asserting filled sinks")
+    # # assert not grid.detect_pits(dem).any()
+    # # assert not grid.detect_depressions(dem).any()
+    # # assert not grid.detect_flats(dem).any()
+    #
+    # # Determine D8 flow directions from DEM
+    # # ----------------------
+    # # Specify directional mapping
+    #
+    # # print("Specify directional mapping")
+    # # dirmap = (64, 128, 1, 2, 4, 8, 16, 32)
+    #
+    # # Cardinal and intercardinal directions are represented by numeric values in
+    # # the output grid. By default, the ESRI scheme is used:
+    #         # North: 64
+    #         # Northeast: 128
+    #         # East: 1
+    #         # Southeast: 2
+    #         # South: 4
+    #         # Southwest: 8
+    #         # West: 16
+    #         # Northwest: 32
 
     # Compute flow directions
     # -------------------------------------
     print("Compute flow directions")
-    fdir = grid.flowdir(dem)
+    # fdir = grid.flowdir(dem)
+    grid = Grid.from_raster(fldir_file)
+    fdir = grid.read_raster(fldir_file)
 
     # Calculate flow accumulation
     # --------------------------
     print("Calculate flow accumulation")
-    acc = grid.accumulation(fdir)
-
+    # acc = grid.accumulation(fdir)
+    acc = grid.read_raster(flacc_file)
     # Delineate a catchment
     # ---------------------
     # Specify pour point
@@ -140,9 +143,13 @@ def delineate(dem='', output_dir="output", output_fname='', basins=None, id_fiel
         # Delineate the catchment
         print("Delineate the catchment")
         catch = grid.catchment(x=x_snap, y=y_snap, fdir=fdir, xytype='coordinate')
-        catch_view = grid.view(catch, dtype=np.uint8)
+        # catch_view = grid.view(catch, dtype=np.uint8)
+
+        watershed = grid.polygonize(data=catch, nodata=grid.nodata)
         
-        for shape, value in grid.polygonize(catch_view, nodata=catch_view.nodata):
+        for shape, value in watershed:
+            if value == 0:
+                continue
             watersheds.append((shape, value, st_id, x, y))
 
     print("Writing to shapefile")
@@ -174,10 +181,12 @@ def main():
         os.mkdir(output)
 
     basins = pd.read_csv("{}/basins.csv".format(input))  # path to csv of pour points
-    dem = "data/n40w090_dem.tif"
+    # dem = "data/n40w090_dem.tif"
+    fldir = "data/Rasters/hyd_na_dir_15s.tif"
+    flacc = "data/Rasters/hyd_na_acc_15s.tif"
     fname = "***.geojson"       # CHANGE ME!!!
     output_fname = os.path.join(output, fname)
-    delineate(dem, output, output_fname, basins)
+    delineate(fldir_file=fldir, flacc_file=flacc, output, output_fname, basins)
 
 if __name__ == "__main__":
     main()
