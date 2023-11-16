@@ -1,0 +1,7 @@
+
+src/PySheds/output/watersheds.cpg
+src/PySheds/output/watersheds.dbf
+src/PySheds/output/watersheds.prj
+src/PySheds/output/watersheds.shp
+src/PySheds/output/watersheds.shx
+src/PySheds/data/n40w090_dem.tif.ovr
