@@ -35,7 +35,7 @@ import os
 #-------------------------------------------------------------------------------
 # Delineate Watershed
 #-------------------------------------------------------------------------------
-def delineate(dem='', output_dir="output", basins=None, id_field="id"):
+def delineate(dem='', output_dir="output", output_fname='', basins=None, id_field="id"):
     """
     Description
     -----------
@@ -45,6 +45,7 @@ def delineate(dem='', output_dir="output", basins=None, id_field="id"):
     -----           ------          -----------
     dem             str             The path to the dem
     output_dir      str             The path to the output folder
+    output_fname    str             The path to the output file
     basins          DataFrame       Pour point DataFrame or GeoDataFrame..
     id_field        str             Station ID field name.
 
@@ -146,18 +147,18 @@ def delineate(dem='', output_dir="output", basins=None, id_field="id"):
 
     print("Writing to shapefile")
     # Specify schema
-    schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', 'st_id': 'str'}}
+    schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', id_field': 'str', 'lat': 'float', 'lng': 'float'}}
 
     # Write shapefile
-    with fiona.open('watersheds.shp', 'w',
-                    driver='ESRI Shapefile',
+    with fiona.open(output_fname, 'w',
+                    driver='GeoJSON',
                     crs=grid.crs.srs,
                     schema=schema) as c:
         i = 0
-        for shape, value, st_id in watersheds:
+        for shape, value, st_id, x, y in watersheds:
             rec = {}
             rec['geometry'] = shape
-            rec['properties'] = {'LABEL' : str(value), 'st_id': str(st_id)}
+            rec['properties'] = {'LABEL': str(value), id_field: st_id, 'lat': y, 'lng': x}
             rec['id'] = str(i)
             c.write(rec)
             i += 1
@@ -174,7 +175,9 @@ def main():
 
     basins = pd.read_csv("{}/basins.csv".format(input))  # path to csv of pour points
     dem = "data/n40w090_dem.tif"
-    delineate(dem, output, basins)
+    fname = ""       # CHANGE ME!!!
+    output_fname = os.path.join(output, fname)
+    delineate(dem, output, output_fname, basins)
 
 if __name__ == "__main__":
     main()
