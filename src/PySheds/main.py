@@ -175,7 +175,7 @@ def main():
 
     basins = pd.read_csv("{}/basins.csv".format(input))  # path to csv of pour points
     dem = "data/n40w090_dem.tif"
-    fname = ""       # CHANGE ME!!!
+    fname = "***.geojson"       # CHANGE ME!!!
     output_fname = os.path.join(output, fname)
     delineate(dem, output, output_fname, basins)
 
