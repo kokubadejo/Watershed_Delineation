@@ -31,6 +31,25 @@ import fiona
 import pandas as pd
 import geopandas as gpd
 import os
+from area import area
+
+#-------------------------------------------------------------------------------
+# Constants
+#-------------------------------------------------------------------------------
+# dem = "data/n40w090_dem.tif"
+FLDIR = "data/Rasters/hyd_na_dir_15s.tif"
+FLACC = "data/Rasters/hyd_na_acc_15s.tif"
+
+#-------------------------------------------------------------------------------
+# Calculate Watershed Area
+#-------------------------------------------------------------------------------
+def calculate_area(shape=None):
+    # print("my shape")
+    # print(shape)
+    # format of shape => {'type': 'Polygon', 'coordinates': [[[x, y], [x, y] ...]]}
+    area_km2 = area(shape) / 1e+6
+    return round(area_km2, 2)
+
 
 #-------------------------------------------------------------------------------
 # Delineate Watershed
@@ -122,12 +141,12 @@ def delineate(fldir_file='', flacc_file='', output_dir="output", output_fname=''
     
     if type(basins) is pd.DataFrame:
         lats = basins['lat'].tolist()
-        lons = basins['lon'].tolist()
-        ids = basins[id_field].tolist()
+        lons = basins['lng'].tolist()
+        st_ids = basins[id_field].tolist()
     elif type(basins) is gpd.GeoDataFrame:
         lats = basins.geometry.y.tolist()
         lons = basins.geometry.x.tolist()
-        ids = basins[id_field].tolist()
+        st_ids = basins[id_field].tolist()
     # x, y = -80.15, 43.09
     
     watersheds = []
@@ -135,7 +154,7 @@ def delineate(fldir_file='', flacc_file='', output_dir="output", output_fname=''
     for index in range(0, len(lats)):
         x = lons[index]
         y = lats[index]
-        st_id = ids[index]
+        st_id = st_ids[index]
 
         # Snap pour point to high accumulation cell
         x_snap, y_snap = grid.snap_to_mask(acc > 9000, (x, y))
@@ -154,18 +173,21 @@ def delineate(fldir_file='', flacc_file='', output_dir="output", output_fname=''
 
     print("Writing to shapefile")
     # Specify schema
-    schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', id_field: 'str', 'lat': 'float', 'lng': 'float'}}
+    schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', id_field: 'str',
+                                                    'lat': 'float', 'lng': 'float',
+                                                    'area': 'float'}}
 
     # Write shapefile
-    with fiona.open(output_fname, 'w',
+    with fiona.open(output_fname + ".geojson", 'w',
                     driver='GeoJSON',
                     crs=grid.crs.srs,
                     schema=schema) as c:
         i = 0
         for shape, value, st_id, x, y in watersheds:
+            calc_area = calculate_area(shape)
             rec = {}
             rec['geometry'] = shape
-            rec['properties'] = {'LABEL': str(value), id_field: st_id, 'lat': y, 'lng': x}
+            rec['properties'] = {'LABEL': str(value), id_field: st_id, 'lat': y, 'lng': x, 'area': calc_area}
             rec['id'] = str(i)
             c.write(rec)
             i += 1
@@ -175,18 +197,18 @@ def delineate(fldir_file='', flacc_file='', output_dir="output", output_fname=''
 # Run Program
 #-------------------------------------------------------------------------------
 def main():
-    input = "data"
-    output = "output"
-    if not os.path.isdir(output):
-        os.mkdir(output)
+    input_dir = "data"
+    output_dir = "output"
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
 
-    basins = pd.read_csv("{}/basins.csv".format(input))  # path to csv of pour points
-    # dem = "data/n40w090_dem.tif"
-    fldir = "data/Rasters/hyd_na_dir_15s.tif"
-    flacc = "data/Rasters/hyd_na_acc_15s.tif"
-    fname = "***.geojson"       # CHANGE ME!!!
-    output_fname = os.path.join(output, fname)
-    delineate(fldir_file=fldir, flacc_file=flacc, output, output_fname, basins)
+    # basins = pd.read_csv(f"{input_dir}/basins.csv")  # path to csv of pour points
+    basins = pd.read_csv(f"{input_dir}/watersheds.csv")
+
+    fname = "watershed_points"       # CHANGE ME!!!
+    output_fname = os.path.join(output_dir, fname)
+    delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir=output_dir, output_fname=output_fname,
+              basins=basins)
 
 if __name__ == "__main__":
     main()

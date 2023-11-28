@@ -34,6 +34,7 @@ import random
 import folium
 import contextily as cx
 import webbrowser
+from shapely import Point
 # ------------------------------------------------------------------------------
 
 def read_in_shapefile(data_dict=None):
@@ -59,6 +60,7 @@ def read_in_shapefile(data_dict=None):
     shp_gdfs = dict()
 
     for shp in data_dict:
+        print(data_dict[shp])
         gdf = geopandas.read_file(data_dict[shp])
         # gdf.to_crs(crs=4326)
         gdf["area"] = gdf.area
@@ -154,7 +156,7 @@ def plot_shp(shapefiles=None, plot=None):
 
         # Save plots
         if plot == 'jpg':
-            plt.savefig('Figure.jpg')
+            plt.savefig('watershed_Figure.jpg')
 
         elif plot == 'png':
             plt.savefig('Figure.png')
@@ -172,17 +174,31 @@ def plot_shp(shapefiles=None, plot=None):
             # Pick layer colour
             colour = random.choice(colours)
             colours.remove(colour)
+            # print(shapefiles[gdf])
 
             m = shapefiles[gdf].explore(column="area", m=m, name=gdf,
                                         style_kwds={'color': colour,
                                                     'fillColor': colour},
                                         legend=False)
 
+        # # Add points
+        # points_df = geopandas.read_file("watersheds.csv")
+        #
+        # # Create a GeoDataFrame from the DataFrame
+        # geometry = [Point(xy) for xy in zip(points_df['lng'], points_df['lat'])]
+        # points_gdf = geopandas.GeoDataFrame(points_df, geometry=geometry)
+        #
+        #
+        # # print(points_gdf)
+        # points_gdf.explore(marker_type='circle', m=m, style_kwds={'color': 'blue'},
+        #                    marker_kwds={'radius': 15},
+        #                    legend=False)
+
         # Add layer control
         folium.LayerControl().add_to(m)
 
         # Save map
-        m.save('base_map.html')
+        m.save('watershed_base_map2.html')
         # webbrowser.open(webmap_file)
 
     else:
@@ -204,8 +220,10 @@ def main():
 
     # Gather all shapefiles in directory - ENSURE THEY ALL HAVE THE SAME CRS
     shape_paths = dict()
-    for path in Path(shpfolder_path).rglob('*.shp'):
-        shape_paths[path.name[:-4]] = path.parent
+    # for path in Path(shpfolder_path).rglob('*.shp'):
+    for path in Path(shpfolder_path).rglob('*.geojson'):
+        # shape_paths[path.name[:-4]] = path.parent
+        shape_paths[path.name[:-8]] = path.parent
 
     if shape_paths == {}:
         print("No shapefiles found")
