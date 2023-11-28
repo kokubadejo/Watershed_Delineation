@@ -37,8 +37,8 @@ from area import area
 # Constants
 #-------------------------------------------------------------------------------
 # dem = "data/n40w090_dem.tif"
-FLDIR = "data/Rasters/hyd_na_dir_15s.tif"
-FLACC = "data/Rasters/hyd_na_acc_15s.tif"
+FLDIR = os.path.join("data", "Rasters", "hyd_na_dir_15s.tif")
+FLACC = os.path.join("data", "Rasters", "hyd_na_acc_15s.tif")
 
 #-------------------------------------------------------------------------------
 # Calculate Watershed Area
