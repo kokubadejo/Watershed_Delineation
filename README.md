@@ -150,11 +150,15 @@ python ravenpy_delineation.py
 ### Pysheds
 - install the pyshed package
   ```
-  conda install pysheds
+  pip install pysheds
+  ```
+- install gdal
+  ```
+  conda install -c conda-forge gdal
   ```
 - install fiona
   ```
-  conda install -c conda-forge fiona
+  pip install fiona
   ```
 - Note
   - replace the dem and basin files with your path and filenames
