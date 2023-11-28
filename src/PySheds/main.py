@@ -54,7 +54,7 @@ def calculate_area(shape=None):
 #-------------------------------------------------------------------------------
 # Delineate Watershed
 #-------------------------------------------------------------------------------
-def delineate(fldir_file='', flacc_file='', output_dir="output", output_fname='', basins=None, id_field="id"):
+def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fname='watersheds', basins=None, id_field="id"):
     """
     Description
     -----------
