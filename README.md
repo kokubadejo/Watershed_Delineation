@@ -20,7 +20,7 @@ The following steps describe the process to setup the environments and packages 
 Note: The example figure was gotten from running the script with the grand river watershed shapefiles gotten from manual, ravenpy and the example (Basinmaker?) delineations
 ![Figure](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/4a5ebbf9-7019-4281-bf19-4b5d48eee39b)
 
-## Getting Started
+# Getting Started
 ### Read_plot_shp.py
 Read in and plot a shapefile
 
@@ -31,23 +31,28 @@ conda activate map
 Install necessary packages
 ```
 # install the geopandas package
-conda install -c conda-forge geopandas
+conda install -n <environment name> -c conda-forge geopandas
 # Note: geopandas supports python 3.8+
 ```
 
 ```
 # install folium
-conda install -c conda-forge folium
+conda install -n <environment name> -c conda-forge folium
 ```
 
 ```
 # install matplotlib
-conda install -c conda-forge matplotlib
+conda install -n <environment name> -c conda-forge matplotlib
 ```
 
 ```
 # install contextily
-conda install -c conda-forge contextily
+conda install -n <environment name> -c conda-forge contextily
+```
+
+```
+# navigate to the directory of the script
+cd "src/Read Shapefiles"
 ```
 
 ```
@@ -59,6 +64,7 @@ conda install -c conda-forge contextily
 python read_plot_shp.py \data png
 ```
 
+## Standalone Scripts
 ### Ravenpy (Full Installation)
 create an environment:
 ```
@@ -70,18 +76,23 @@ conda activate ravenpy
 ```
 install ravenpy[gis] (full installation) using conda-forge:
 ```
-conda install -c conda-forge ravenpy[gis]
+conda install -n ravenpy -c conda-forge ravenpy[gis]
 ```
 install birdy:
 ```
-conda install -c conda-forge birdy
+conda install -n ravenpy -c conda-forge birdy
 ```
 install geopandas: 
 ```
-conda install geopandas
+conda install -n ravenpy geopandas
 ```
 
 The script is based on the [jupyter notebook](https://ravenpy.readthedocs.io/en/latest/notebooks/01_Getting_watershed_boundaries.html) with the added functionality of converting and saving the created geojson boundary file to a shapefile
+
+navigate to the directory of the script:
+```
+cd src/Ravenpy
+```
 
 run the script:
 ```
@@ -143,9 +154,12 @@ python ravenpy_delineation.py
   ```
   pip install "pandas<2.0.0"
   ```
-- navigate to the directory of python script and run the tool:
+- navigate to the directory of python script:
   ```
-  cd \PATH\TO\SCRIPT
+  cd path\to\script
+  ```
+- run the tool
+  ```
   python delineate.py
   ```
 - All these instructions can be found in [mheberger's delineator repository on github](https://github.com/mheberger/delineator)
@@ -168,6 +182,16 @@ python ravenpy_delineation.py
 
 - Note
   - replace the dem and basin files with your path and filenames
+ 
+- navigate to the directory of python script:
+  ```
+  cd path\to\script
+  ```
+- run the script:
+  ```
+  python main.py
+  ```
+  
 
 ### Rabpro
 - install the rabpro package in a virtual environment
@@ -184,7 +208,8 @@ python ravenpy_delineation.py
   ```
 - to download MERIT data, fill out this [google form](https://docs.google.com/forms/d/e/1FAIpQLSeguQvFq0L4Afm2nrjjBnNaw6jKyUHA97Li6HGqL84JKLFV8A/viewform) to obtain a username and password
 - more information on installation and functionality can be found on the [Rabpro github](https://veinsoftheearth.github.io/rabpro/index.html)
-  
+
+## Super Computer Scripts
 
 ## Delineation Results
 ![Grand_River (2)](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/f619b3d3-5466-4fe4-b447-3b20d05f5aa8)
@@ -237,4 +262,11 @@ python ravenpy_delineation.py
      
 4. DLL error from shapely
    - reorder the import statement
+
+5. ```
+   from fiona._env import (
+   ImportError: DLL load failed while importing _env: The specified procedure could not be found.
+   ```
+   - Usually caused from incompatibility with gdal
+   - quick fix => uninstall gdal and fiona, reinstall fiona:
      
