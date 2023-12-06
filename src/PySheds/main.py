@@ -37,8 +37,8 @@ from area import area
 # Constants
 #-------------------------------------------------------------------------------
 # dem = "data/n40w090_dem.tif"
-FLDIR = os.path.join("data", "Rasters", "hyd_na_dir_15s.tif")
-FLACC = os.path.join("data", "Rasters", "hyd_na_acc_15s.tif")
+FLDIR = os.path.join(os.path.dirname(__file__), "data", "Rasters", "hyd_na_dir_15s.tif")
+FLACC = os.path.join(os.path.dirname(__file__), "data", "Rasters", "hyd_na_acc_15s.tif")
 
 #-------------------------------------------------------------------------------
 # Calculate Watershed Area
@@ -138,12 +138,12 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fn
     # ---------------------
     # Specify pour point
     print("Specify pour point")
-    
-    
+
+
     lats = basins['lat'].tolist()
-    lons = basins['lng'].tolist()
+    lons = basins['lon'].tolist()
     st_ids = basins[id_field].tolist()
-    
+
     watersheds = []
 
     for index in range(0, len(lats)):
@@ -160,7 +160,7 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fn
         # catch_view = grid.view(catch, dtype=np.uint8)
 
         watershed = grid.polygonize(data=catch, nodata=grid.nodata)
-        
+
         for shape, value in watershed:
             if value == 0:
                 continue

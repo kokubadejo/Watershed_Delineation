@@ -1,3 +1,16 @@
+**.DS_Store
+
+data/MERIT
+
+**__pycache__/*
+
+src/Figure.png
+src/Super Computer Scripts/test
+src/Super Computer Scripts/Total_Phosphorus_mixed_forms_obs.json
+src/Super Computer Scripts/Mghydro/map/*
+src/Super Computer Scripts/Mghydro/pkl/*.pkl
+src/Super Computer Scripts/Mghydro/py/__pycache__
+
 
 src/PySheds/output/watersheds.cpg
 src/PySheds/output/watersheds.dbf
