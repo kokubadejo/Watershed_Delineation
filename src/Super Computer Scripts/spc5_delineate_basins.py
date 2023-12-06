@@ -76,6 +76,8 @@ if not os.path.exists(input_file):
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
+if (method not in ["mghydro", "pysheds", None]):
+    raise ValueError("Method needs to be one of the following: 'mghydro', 'pysheds'.")
 
 del parser, args
 
@@ -147,7 +149,6 @@ for iistation,istation in enumerate(stations):
 
     # Kasope add code to delineate basin ...
     # os.environ['USE_PYGEOS'] = '0'
-    import numpy as np
     import pandas as pd
     
     json_name = input_file[:-5]
