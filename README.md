@@ -135,6 +135,14 @@ python ravenpy_delineation.py
   ```
   $ pip install -r requirements.txt
   ```
+- install pygeos
+  ```
+  conda install pygeos
+  ```
+- downgrade pandas (version >2 has incompatibility with pickle)
+  ```
+  pip install "pandas<2.0.0"
+  ```
 - navigate to the directory of python script and run the tool:
   ```
   cd \PATH\TO\SCRIPT
@@ -148,14 +156,16 @@ python ravenpy_delineation.py
   ```
   pip install pysheds
   ```
-- install gdal
-  ```
-  conda install -c conda-forge gdal
-  ```
+
 - install fiona
   ```
   pip install fiona
   ```
+- install area
+  ```
+  pip install area
+  ```
+
 - Note
   - replace the dem and basin files with your path and filenames
 
