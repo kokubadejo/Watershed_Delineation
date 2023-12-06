@@ -210,6 +210,35 @@ python ravenpy_delineation.py
 - more information on installation and functionality can be found on the [Rabpro github](https://veinsoftheearth.github.io/rabpro/index.html)
 
 ## Super Computer Scripts
+- install the packages for the Pysheds and Mghydro tools
+- navigate to the script directory
+  ```
+  cd path\to\script
+  ```
+- run the script:
+  ```
+  python spc5_delineate_basins.py --input_file <json file with station data> --output_folder "test" --start 10 --end 15 -m "mghydro"
+  ```
+
+**Note:**
+The format of the json file should be:
+```
+{
+ "value": [station_dicts]
+}
+```
+
+A station_dict is structured as follows:
+```
+{
+   "Id": 1,                              # mandatory
+   "ID": "...",
+   "Name": "...",
+   "LatitudeNormalized": 46.214947,      # mandatory
+   "LongitudeNormalized": -64.674869,    # mandatory
+   "observations": [{...}, ...]
+}
+```
 
 ## Delineation Results
 ![Grand_River (2)](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/f619b3d3-5466-4fe4-b447-3b20d05f5aa8)
