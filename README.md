@@ -134,7 +134,8 @@ python ravenpy_delineation.py
 ### MgHydro's Delineator
 - this tool was created by [Matthew Heberger](https://mghydro.com/)
 - download the [repository](https://github.com/mheberger/delineator) and follow these [instructions](https://github.com/mheberger/delineator#readme) to download the necessary data
-  - [Download MERIT-Basins vector data](https://www.reachhydro.org/home/params/merit-basins)
+  - [Download MERIT-Basins vector data](https://www.reachhydro.org/home/params/merit-basins):
+    - [MERIT-Basins hydrography (based on MERIT-Hydro v0.7/v1.0)](https://drive.google.com/drive/folders/1uCQFmdxFbjwoT9OYJxw-pXaP8q_GYH1a?usp=share_link) - pfaf_level_02
   - [Download simplified MERIT-Basins data](https://mghydro.com/watersheds/share/catchments_simplified.zip)
 - edit the config.py file according to where your data is located
 - create a python virtual environment and activate it:
@@ -150,10 +151,6 @@ python ravenpy_delineation.py
   ```
   conda install pygeos
   ```
-- downgrade pandas (version >2 has incompatibility with pickle)
-  ```
-  pip install "pandas<2.0.0"
-  ```
 - navigate to the directory of python script:
   ```
   cd path\to\script
@@ -162,6 +159,7 @@ python ravenpy_delineation.py
   ```
   python delineate.py
   ```
+- **Note:** any pandas version >= 2.0 may have compatibility errors with pickle.
 - All these instructions can be found in [mheberger's delineator repository on github](https://github.com/mheberger/delineator)
 - Note: To keep things consistent, the [Hydrosheds](https://www.hydrosheds.org/hydrosheds-core-downloads) dem and accumulation rasters were used instead of the [MERIT products](https://mghydro.com/watersheds/rasters/)
 
