@@ -21,7 +21,7 @@ def delineate(basins='', output=''):
 
     Input           Format          Description
     -----           ------          -----------
-    basins          str             The path the basins/pourpoints csv
+    basins          Dataframe       The pandas dataframe of the basins
     output_dir      str             The path to the output folder
 
     Output          Format          Description
@@ -33,6 +33,7 @@ def delineate(basins='', output=''):
     None
 
     """
+    cwd = os.getcwd()
     # Create WPS instances# Set environment variable WPS_URL to "http://localhost:9099" to run on the default local server
     pavics_url = "https://pavics.ouranos.ca"
     raven_url = os.environ.get("WPS_URL", f"{pavics_url}/twitcher/ows/proxy/raven/wps")
@@ -49,8 +50,8 @@ def delineate(basins='', output=''):
         x = lons[index]
         y = lats[index]
         id = ids[index]
-        print("lon: {} lat: {} id: {}".format(x, y, id))
-        basin_dir = "{}/{}".format(output, id)
+        print(f"lon: {x} lat: {y} id: {id}")
+        basin_dir = os.path.join(cwd, output, id)
         if not os.path.isdir(basin_dir):
             os.mkdir(basin_dir)
 
@@ -73,9 +74,9 @@ def delineate(basins='', output=''):
         gdf = geopandas.read_file(feat)
 
         # Converting geojson to shapefile
-        if not os.path.isdir("{}}/{}".format(output, id)):
-            os.mkdir("{}}/{}".format(output, id))
-        gdf.to_file("{}/{}/{}.shp".format(output, id, id))
+        if not os.path.isdir(f"{output}/{id}"):
+            os.mkdir(os.path.join(output, id))
+        gdf.to_file(os.path.join(output, id, f"{id}.shp"))
 
     print("Delineation complete!")
 
@@ -83,12 +84,12 @@ def delineate(basins='', output=''):
 # Run Program
 #-------------------------------------------------------------------------------
 def main():
-    input = "data"
+    input_dir = "data"
     output = "output"
     if not os.path.isdir(output):
         os.mkdir(output)
 
-    basins = pd.read_csv("{}/basins.csv".format(input))  # path to csv of pour points
+    basins = pd.read_csv(f"{input_dir}/basins.csv")  # path to csv of pour points
     delineate(basins, output)
 
 if __name__ == "__main__":

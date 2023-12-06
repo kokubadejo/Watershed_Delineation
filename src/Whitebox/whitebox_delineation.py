@@ -197,6 +197,7 @@ def whitebox_delineate(wbt, dem, fldir, pourpoint, output_dir):
 #-------------------------------------------------------------------------------
 def main():
     # Create WhiteboxTools instance
+    start
     wbt = WhiteboxTools()
 
     # Setup directories
@@ -228,7 +229,7 @@ def main():
 
     # Data parameters
     # PLEASE ADD YOUR DATA
-    dem = 'n50w120_dem.tif'        # relative path to dem (if any)
+    dem = 'n40w090_dem.tif'        # relative path to dem (if any)
     fldir = ''          # relative path to flow direction raster
     # (if any)
     pourpoint_csv = "basins.csv" # relative path to pourpoint csv file

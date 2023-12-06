@@ -34,7 +34,6 @@ import random
 import folium
 import contextily as cx
 import webbrowser
-from shapely import Point
 # ------------------------------------------------------------------------------
 
 def read_in_shapefile(data_dict=None):
@@ -60,6 +59,7 @@ def read_in_shapefile(data_dict=None):
     shp_gdfs = dict()
 
     for shp in data_dict:
+        print("huh")
         print(data_dict[shp])
         gdf = geopandas.read_file(data_dict[shp])
         # gdf.to_crs(crs=4326)
@@ -181,18 +181,18 @@ def plot_shp(shapefiles=None, plot=None):
                                                     'fillColor': colour},
                                         legend=False)
 
-        # # Add points
-        # points_df = geopandas.read_file("watersheds.csv")
-        #
-        # # Create a GeoDataFrame from the DataFrame
-        # geometry = [Point(xy) for xy in zip(points_df['lng'], points_df['lat'])]
-        # points_gdf = geopandas.GeoDataFrame(points_df, geometry=geometry)
-        #
-        #
-        # # print(points_gdf)
-        # points_gdf.explore(marker_type='circle', m=m, style_kwds={'color': 'blue'},
-        #                    marker_kwds={'radius': 15},
-        #                    legend=False)
+        # Add points
+        points_df = geopandas.read_file("watersheds.csv")
+
+        # Create a GeoDataFrame from the DataFrame
+        geometry = [Point(xy) for xy in zip(points_df['lng'], points_df['lat'])]
+        points_gdf = geopandas.GeoDataFrame(points_df, geometry=geometry)
+
+
+        # print(points_gdf)
+        points_gdf.explore(marker_type='circle', m=m, style_kwds={'color': 'blue'},
+                           marker_kwds={'radius': 15},
+                           legend=False)
 
         # Add layer control
         folium.LayerControl().add_to(m)
@@ -223,13 +223,14 @@ def main():
     # for path in Path(shpfolder_path).rglob('*.shp'):
     for path in Path(shpfolder_path).rglob('*.geojson'):
         # shape_paths[path.name[:-4]] = path.parent
-        shape_paths[path.name[:-8]] = path.parent
+        shape_paths[path.name[:-8]] = os.path.join(str(path.parent), path.name)
 
     if shape_paths == {}:
         print("No shapefiles found")
         return
 
     # Run functions
+    print(shape_paths)
     shape_gdfs = read_in_shapefile(data_dict=shape_paths)
     plot_shp(shapefiles=shape_gdfs, plot=plot)
 

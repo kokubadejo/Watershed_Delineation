@@ -1,6 +1,6 @@
 {
   "verbose_mode": true,
-  "working_directory": "C:\\Users\\kokubade\\OneDrive - University of Waterloo\\Documents\\Co-op Fall 2023 Docs\\Watershed Delineation\\Other Delineation Tools\\Whitebox\\data\\",
+  "working_directory": "C:\\Users\\kokubade\\OneDrive - University of Waterloo\\Documents\\Co-op Fall 2023 Docs\\Github Repo\\Watershed_Delineation\\src\\Whitebox\\data\\",
   "compress_rasters": true,
   "max_procs": -1
 }

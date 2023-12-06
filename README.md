@@ -16,10 +16,6 @@ The following steps describe the process to setup the environments and packages 
    ```
    conda config --add channels conda-forge
    ```
-5. Install dependencies and packages (if this step is done, you can ignore subsequent package installs mentioned in this      document.
-   ```
-   conda install --file requirements.txt
-   ```
 
 Note: The example figure was gotten from running the script with the grand river watershed shapefiles gotten from manual, ravenpy and the example (Basinmaker?) delineations
 ![Figure](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/4a5ebbf9-7019-4281-bf19-4b5d48eee39b)
@@ -139,6 +135,14 @@ python ravenpy_delineation.py
   ```
   $ pip install -r requirements.txt
   ```
+- install pygeos
+  ```
+  conda install pygeos
+  ```
+- downgrade pandas (version >2 has incompatibility with pickle)
+  ```
+  pip install "pandas<2.0.0"
+  ```
 - navigate to the directory of python script and run the tool:
   ```
   cd \PATH\TO\SCRIPT
@@ -152,14 +156,16 @@ python ravenpy_delineation.py
   ```
   pip install pysheds
   ```
-- install gdal
-  ```
-  conda install -c conda-forge gdal
-  ```
+
 - install fiona
   ```
   pip install fiona
   ```
+- install area
+  ```
+  pip install area
+  ```
+
 - Note
   - replace the dem and basin files with your path and filenames
 
@@ -212,3 +218,23 @@ python ravenpy_delineation.py
      ```
      rpo = rabpro.profiler(coords, name=name, da=500)        # play around with the da
      ```
+
+3. ```
+   from rasterio._version import gdal_version, get_geos_version, get_proj_version
+   ImportError: DLL load failed while importing _version: The specified procedure could not be found.
+   ```
+   - Try removing and reinstalling rasterio & pyshed
+     ```
+     pip uninstall pysheds
+     ```
+     ```
+     pip uninstall rasterio
+     ```
+     ```
+     pip install pysheds
+     ```
+     Note: pysheds installation installs rasterio with it
+     
+4. DLL error from shapely
+   - reorder the import statement
+     

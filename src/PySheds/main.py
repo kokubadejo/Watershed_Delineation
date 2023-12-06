@@ -26,19 +26,19 @@
 # Imports
 #-------------------------------------------------------------------------------
 from pysheds.grid import Grid
-import numpy as np
+# import numpy as np
 import fiona
-import pandas as pd
-import geopandas as gpd
 import os
+os.environ['USE_PYGEOS'] = '0'
+import pandas as pd
 from area import area
 
 #-------------------------------------------------------------------------------
 # Constants
 #-------------------------------------------------------------------------------
 # dem = "data/n40w090_dem.tif"
-FLDIR = "data/Rasters/hyd_na_dir_15s.tif"
-FLACC = "data/Rasters/hyd_na_acc_15s.tif"
+FLDIR = os.path.join("data", "Rasters", "hyd_na_dir_15s.tif")
+FLACC = os.path.join("data", "Rasters", "hyd_na_acc_15s.tif")
 
 #-------------------------------------------------------------------------------
 # Calculate Watershed Area
@@ -54,7 +54,7 @@ def calculate_area(shape=None):
 #-------------------------------------------------------------------------------
 # Delineate Watershed
 #-------------------------------------------------------------------------------
-def delineate(fldir_file='', flacc_file='', output_dir="output", output_fname='', basins=None, id_field="id"):
+def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fname='watersheds', basins=None, id_field="id"):
     """
     Description
     -----------
@@ -139,15 +139,10 @@ def delineate(fldir_file='', flacc_file='', output_dir="output", output_fname=''
     # Specify pour point
     print("Specify pour point")
     
-    if type(basins) is pd.DataFrame:
-        lats = basins['lat'].tolist()
-        lons = basins['lng'].tolist()
-        st_ids = basins[id_field].tolist()
-    elif type(basins) is gpd.GeoDataFrame:
-        lats = basins.geometry.y.tolist()
-        lons = basins.geometry.x.tolist()
-        st_ids = basins[id_field].tolist()
-    # x, y = -80.15, 43.09
+    
+    lats = basins['lat'].tolist()
+    lons = basins['lng'].tolist()
+    st_ids = basins[id_field].tolist()
     
     watersheds = []
 
@@ -203,11 +198,11 @@ def main():
         os.mkdir(output_dir)
 
     # basins = pd.read_csv(f"{input_dir}/basins.csv")  # path to csv of pour points
-    basins = pd.read_csv(f"{input_dir}/watersheds.csv")
+    basins = pd.read_csv(f"{input_dir}/basins_random.csv")
 
-    fname = "watershed_points"       # CHANGE ME!!!
+    fname = "watershed_points2"       # CHANGE ME!!!
     output_fname = os.path.join(output_dir, fname)
-    delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir=output_dir, output_fname=output_fname,
+    delineate(output_dir=output_dir, output_fname=output_fname,
               basins=basins)
 
 if __name__ == "__main__":
