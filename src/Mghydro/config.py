@@ -9,10 +9,11 @@ on how to download the input data.
 """
 
 # Path to your CSV file with the watershed outlet data
-OUTLETS_CSV = "C:\\Users\\kokubade\\OneDrive - University of " \
-              "Waterloo\\Documents\\Co-op Fall 2023 Docs\\Watershed " \
-              "Delineation\\Other Delineation " \
-              "Tools\\Mghydro Delineator\\test_data\\basins_random.csv"
+OUTLETS_CSV = ''
+# OUTLETS_CSV = "C:\\Users\\kokubade\\OneDrive - University of " \
+#               "Waterloo\\Documents\\Co-op Fall 2023 Docs\\Watershed " \
+#               "Delineation\\Other Delineation " \
+#               "Tools\\Mghydro Delineator\\test_data\\basins_random.csv"
 
 # Set to True for "higher resolution" mode or False for "lower resolution."
 HIGH_RES = True
@@ -56,9 +57,13 @@ RIVERS_DIR = "C:/Users/kokubade/OneDrive - University of " \
              "Waterloo/Documents/Co-op Fall 2023 Docs/Watershed " \
              "Delineation/Other Delineation Tools/Mghydro Delineator/test_data/pfaf_level_02"
 
+MERIT_BASINS = "data/shp/basins_level2/merit_hydro_vect_level2.shp"
 
 # Folder where the script will write the output GeoJSON files or shapefiles
 OUTPUT_DIR = "output"
+
+# prefix of output file name -> goes before the watershed id
+OUTPUT_PREFIX = ''
 
 # The file extension will determine the types of files the script creates.
 #   "geojson" for GeoJSON files

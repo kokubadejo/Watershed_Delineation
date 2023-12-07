@@ -155,16 +155,51 @@ for iistation,istation in enumerate(stations):
     basin = pd.DataFrame.from_records([istation])
     print("basin")
     print(basin, json_name)
+    
+    dir_path = os.path.dirname(os.path.realpath(__file__))
         
     if method in [None, 'mghydro']:  # Mghydro as default method
-        import Mghydro.delineate as mg
         
-        mg.delineate(basin, output_folder, json_name)
+        
+        # change the next two lines to use a different method for the
+        # watershed delineation by changing the module and delineation
+        # function being imported
+        sys.path.append(dir_path + os.path.join("\\..", "Mghydro"))
+        print(sys.path)
+        
+        file = 'point.csv'
+        basin_csv = basin.to_csv(file)
+        
+        import config
+        config.OUTLETS_CSV = os.path.abspath(file)
+        config.OUTPUT_DIR = os.path.abspath(output_folder)
+        config.OUTPUT_PREFIX = json_name + '_'
+        
+        print("my paths")
+        print(config.OUTLETS_CSV)
+        print(config.OUTPUT_DIR)
+        print(config.OUTPUT_PREFIX)
+        
+        from delineate import delineate
+        
+        prev_path = os.getcwd()
+        target_dir = sys.path[-1]
+        
+        os.chdir(target_dir)
+
+        delineate()
+        
+        os.chdir(prev_path)
+        
+        if(os.path.exists(file) and os.path.isfile(file)): 
+            os.remove(file) 
     
     elif method == "pysheds":
-        import PySheds.main as ps
+        sys.path.append(dir_path + os.path.join("\\..", "Pysheds"))
+        print(sys.path)
+        import main
         
-        ps.delineate(output_dir=output_folder, output_fname=json_name, basins=basin)
+        main.delineate(output_dir=output_folder, output_fname=json_name+'_', basins=basin)
         
     
     

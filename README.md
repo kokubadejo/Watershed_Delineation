@@ -138,11 +138,19 @@ python ravenpy_delineation.py
     - [MERIT-Basins hydrography (based on MERIT-Hydro v0.7/v1.0)](https://drive.google.com/drive/folders/1uCQFmdxFbjwoT9OYJxw-pXaP8q_GYH1a?usp=share_link) - pfaf_level_02
   - [Download simplified MERIT-Basins data](https://mghydro.com/watersheds/share/catchments_simplified.zip)
 - edit the config.py file according to where your data is located
-  #### Python Virtual Environment Instructions
-- create a python virtual environment and activate it:
+  - **Note:** If you're using this with the super computer script, it's a good idea to have the paths in config.py as absolute paths
+    
+  #### Package Installations
+- create a python virtual / anaconda environment and activate it:
   ```
+  # Python Virtual Environment
   pyenv virtualenv <python_version> <environment_name>
   pyenv activate <environment_name>
+  ```
+  ```
+  # Anaconda Environment
+  conda create --name <environment name> python=3.9
+  conda activate <environment_name>
   ```
 - install all the requirements
   ```
@@ -152,22 +160,9 @@ python ravenpy_delineation.py
   ```
   pip install pygeos
   ```
-- navigate to the directory of python script:
+  or
   ```
-  cd path\to\script
-  ```
-- run the tool
-  ```
-  python delineate.py
-  ```
-  #### Anaconda Environment Instructions
-  - install all the requirements
-  ```
-  $ pip install -n <environment-name> -r requirements.txt
-  ```
-- install pygeos
-  ```
-  conda install -n <environment name> pygeos
+  conda install pygeos
   ```
 - navigate to the directory of python script:
   ```
@@ -227,14 +222,14 @@ python ravenpy_delineation.py
 - more information on installation and functionality can be found on the [Rabpro github](https://veinsoftheearth.github.io/rabpro/index.html)
 
 ## Super Computer Scripts
-- install the packages for the Pysheds and Mghydro tools
+- install the packages for the Pysheds and Mghydro tools into one environment
 - navigate to the script directory
   ```
   cd path\to\script
   ```
-- run the script:
+- run the script, eg:
   ```
-  python spc5_delineate_basins.py --input_file <json file with station data> --output_folder "test" --start 10 --end 15 -m "mghydro"
+  python spc5_delineate_basins.py --input_file "Total_Phosphorus_mixed_forms_obs.json" --output_folder "test" --start 10 --end 15 -m "mghydro"
   ```
 
 **Note:**

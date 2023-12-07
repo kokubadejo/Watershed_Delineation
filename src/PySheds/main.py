@@ -69,7 +69,7 @@ def calculate_bbox(lat, lng, radius):
 #-------------------------------------------------------------------------------
 # Delineate Watershed
 #-------------------------------------------------------------------------------
-def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", basins=None, id_field="id"):
+def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fname='', basins=None, id_field="id"):
     """
     Description
     -----------
@@ -80,6 +80,7 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", basins=No
     fldir_file      str             The path to the flow direction raster
     flacc_file      str             The path to the flow accumulation raster
     output_dir      str             The path to the output folder
+    output_fname    str             The name of the output file
     basins          DataFrame       Pour point DataFrame or GeoDataFrame..
     id_field        str             Station ID field name.
 
@@ -149,7 +150,7 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", basins=No
     # Specify pour point
     print("Specify pour point")    
     lats = basins['lat'].tolist()
-    lons = basins['lon'].tolist()
+    lons = basins['lng'].tolist()
     st_ids = basins[id_field].tolist()
     # watersheds = []
 
@@ -188,40 +189,41 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", basins=No
         new_shape = {'type': 'Polygon', 'coordinates': [tuple(merged.exterior.coords)]}
 
         print("Writing to shapefile")
+        file = f"{output_dir}/{output_fname}{st_id}.geojson"
         # Specify schema
         schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', id_field: 'str',
                                                         'lat': 'float', 'lng': 'float',
                                                         'area': 'float'}}
-
-        # Write shapefile
-        with fiona.open(f"{output_dir}/{st_id}.geojson", 'w',
-                        driver='GeoJSON',
-                        crs=grid.crs.srs,
-                        schema=schema) as c:
-            i = 0
-            calc_area = calculate_area(new_shape)
-            rec = {}
-            rec['geometry'] = new_shape
-            rec['properties'] = {'LABEL': str(val), id_field: st_id, 'lat': y, 'lng': x, 'area': calc_area}
-            rec['id'] = str(i)
-            c.write(rec)
-            i += 1
-                
-            # for shape, value in watershed:
-            #     print("value")
-            #     print(value)
-            #     if value == 0:
-            #         continue
-            #     shape['coordinates'][0] = shp
-            #     calc_area = calculate_area(shape)
-            #     rec = {}
-            #     rec['geometry'] = shape
-            #     rec['properties'] = {'LABEL': str(value), id_field: st_id, 'lat': y, 'lng': x, 'area': calc_area}
-            #     rec['id'] = str(i)
-            #     c.write(rec)
-            #     i += 1
-            #     print("check it")
-            #     print(st_id, shape)
+        if not (os.path.exists(file) and os.path.isfile(file)):
+            # Write shapefile
+            with fiona.open(file, 'w',
+                            driver='GeoJSON',
+                            crs=grid.crs.srs,
+                            schema=schema) as c:
+                i = 0
+                calc_area = calculate_area(new_shape)
+                rec = {}
+                rec['geometry'] = new_shape
+                rec['properties'] = {'LABEL': str(val), id_field: st_id, 'lat': y, 'lng': x, 'area': calc_area}
+                rec['id'] = str(i)
+                c.write(rec)
+                i += 1
+                    
+                # for shape, value in watershed:
+                #     print("value")
+                #     print(value)
+                #     if value == 0:
+                #         continue
+                #     shape['coordinates'][0] = shp
+                #     calc_area = calculate_area(shape)
+                #     rec = {}
+                #     rec['geometry'] = shape
+                #     rec['properties'] = {'LABEL': str(value), id_field: st_id, 'lat': y, 'lng': x, 'area': calc_area}
+                #     rec['id'] = str(i)
+                #     c.write(rec)
+                #     i += 1
+                #     print("check it")
+                #     print(st_id, shape)
 
 
 #-------------------------------------------------------------------------------

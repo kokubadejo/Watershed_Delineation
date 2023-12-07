@@ -288,7 +288,7 @@ def delineate():
 
     # Check that the CSV file is there
     if not os.path.isfile(OUTLETS_CSV):
-        raise Exception(f"Could not your outlets file at: {OUTLETS_CSV}")
+        raise Exception(f"Could not load your outlets file at: {OUTLETS_CSV}")
 
     # Read the outlet points CSV file and put into a Pandas DataFrame
     # (I call the outlet points gages, because I usually in delineated watersheds at streamflow gages)
@@ -569,7 +569,7 @@ def delineate():
 
             # SAVE the Watershed to disk as a GeoJSON file or a shapefile
             if VERBOSE: print(f' Writing output for watershed {wid}')
-            outfile = f"{OUTPUT_DIR}/{wid}.{OUTPUT_EXT}"
+            outfile = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}{wid}.{OUTPUT_EXT}"
 
             # This line rounds all the vertices to fewer digits. For text-like formats GeoJSON or KML, makes smaller
             # files with minimal loss of precision. For other formats (shp, gpkg), doesn't make a difference in file size
