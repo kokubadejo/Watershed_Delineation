@@ -31,14 +31,16 @@ import fiona
 import os
 os.environ['USE_PYGEOS'] = '0'
 import pandas as pd
+from shapely.geometry import Polygon
+from shapely.ops import unary_union
 from area import area
 
 #-------------------------------------------------------------------------------
 # Constants
 #-------------------------------------------------------------------------------
 # dem = "data/n40w090_dem.tif"
-FLDIR = os.path.join("data", "Rasters", "hyd_na_dir_15s.tif")
-FLACC = os.path.join("data", "Rasters", "hyd_na_acc_15s.tif")
+FLDIR = os.path.join(os.path.dirname(__file__), "data", "Rasters", "hyd_na_dir_15s.tif")
+FLACC = os.path.join(os.path.dirname(__file__), "data", "Rasters", "hyd_na_acc_15s.tif")
 
 #-------------------------------------------------------------------------------
 # Calculate Watershed Area
@@ -50,11 +52,24 @@ def calculate_area(shape=None):
     area_km2 = area(shape) / 1e+6
     return round(area_km2, 2)
 
+#-------------------------------------------------------------------------------
+# Calculate Bounding Box
+#-------------------------------------------------------------------------------
+def calculate_bbox(lat, lng, radius):
+    lat_dist = 0.00902
+    lng_dist = 0.00898
+    minx = lng - (radius * lng_dist)
+    miny = lat - (radius * lat_dist)
+    maxx = lng + (radius * lng_dist)
+    maxy = lat + (radius * lat_dist)
+    
+    return (minx, miny, maxx, maxy)
+
 
 #-------------------------------------------------------------------------------
 # Delineate Watershed
 #-------------------------------------------------------------------------------
-def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fname='watersheds', basins=None, id_field="id"):
+def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", basins=None, id_field="id"):
     """
     Description
     -----------
@@ -65,7 +80,6 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fn
     fldir_file      str             The path to the flow direction raster
     flacc_file      str             The path to the flow accumulation raster
     output_dir      str             The path to the output folder
-    output_fname    str             The path to the output file
     basins          DataFrame       Pour point DataFrame or GeoDataFrame..
     id_field        str             Station ID field name.
 
@@ -127,31 +141,31 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fn
     print("Compute flow directions")
     # fdir = grid.flowdir(dem)
     grid = Grid.from_raster(fldir_file)
-    fdir = grid.read_raster(fldir_file)
+    fdir = grid.read_raster(fldir_file, window=grid.bbox, window_crs=grid.crs)
 
-    # Calculate flow accumulation
-    # --------------------------
-    print("Calculate flow accumulation")
-    # acc = grid.accumulation(fdir)
-    acc = grid.read_raster(flacc_file)
+    
     # Delineate a catchment
     # ---------------------
     # Specify pour point
-    print("Specify pour point")
-    
-    
+    print("Specify pour point")    
     lats = basins['lat'].tolist()
     lons = basins['lng'].tolist()
     st_ids = basins[id_field].tolist()
-    
-    watersheds = []
 
     for index in range(0, len(lats)):
         x = lons[index]
         y = lats[index]
         st_id = st_ids[index]
+        
+        # Calculate flow accumulation
+        # --------------------------
+        print("Calculate flow accumulation")
+        # acc = grid.accumulation(fdir)
+        bbox = calculate_bbox(y, x, 150)
+        acc = grid.read_raster(flacc_file, window=bbox, window_crs=grid.crs)
 
         # Snap pour point to high accumulation cell
+        print("Snapping pour point")
         x_snap, y_snap = grid.snap_to_mask(acc > 9000, (x, y))
 
         # Delineate the catchment
@@ -161,31 +175,53 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fn
 
         watershed = grid.polygonize(data=catch, nodata=grid.nodata)
         
-        for shape, value in watershed:
-            if value == 0:
-                continue
-            watersheds.append((shape, value, st_id, x, y))
+        watershed_dict = {st_id: []}
+        
+        # Merging Multi-Part Watersheds
+        print("Merging Multi-Part Watersheds")
+        for shape, val in watershed:
+            if val != 0:
+                shp = Polygon(shape['coordinates'][0]).buffer(0.0001)
+                watershed_dict[st_id].append(shp)
+        
+        merged = Polygon(unary_union(watershed_dict[st_id]).buffer(-0.0001))
+        new_shape = {'type': 'Polygon', 'coordinates': [tuple(merged.exterior.coords)]}
 
-    print("Writing to shapefile")
-    # Specify schema
-    schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', id_field: 'str',
-                                                    'lat': 'float', 'lng': 'float',
-                                                    'area': 'float'}}
+        print("Writing to shapefile")
+        # Specify schema
+        schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', id_field: 'str',
+                                                        'lat': 'float', 'lng': 'float',
+                                                        'area': 'float'}}
 
-    # Write shapefile
-    with fiona.open(output_fname + ".geojson", 'w',
-                    driver='GeoJSON',
-                    crs=grid.crs.srs,
-                    schema=schema) as c:
-        i = 0
-        for shape, value, st_id, x, y in watersheds:
-            calc_area = calculate_area(shape)
+        # Write shapefile
+        with fiona.open(f"{output_dir}/{st_id}.geojson", 'w',
+                        driver='GeoJSON',
+                        crs=grid.crs.srs,
+                        schema=schema) as c:
+            i = 0
+            calc_area = calculate_area(new_shape)
             rec = {}
-            rec['geometry'] = shape
-            rec['properties'] = {'LABEL': str(value), id_field: st_id, 'lat': y, 'lng': x, 'area': calc_area}
+            rec['geometry'] = new_shape
+            rec['properties'] = {'LABEL': str(val), id_field: st_id, 'lat': y, 'lng': x, 'area': calc_area}
             rec['id'] = str(i)
             c.write(rec)
             i += 1
+                
+            # for shape, value in watershed:
+            #     print("value")
+            #     print(value)
+            #     if value == 0:
+            #         continue
+            #     shape['coordinates'][0] = shp
+            #     calc_area = calculate_area(shape)
+            #     rec = {}
+            #     rec['geometry'] = shape
+            #     rec['properties'] = {'LABEL': str(value), id_field: st_id, 'lat': y, 'lng': x, 'area': calc_area}
+            #     rec['id'] = str(i)
+            #     c.write(rec)
+            #     i += 1
+            #     print("check it")
+            #     print(st_id, shape)
 
 
 #-------------------------------------------------------------------------------
@@ -199,11 +235,7 @@ def main():
 
     # basins = pd.read_csv(f"{input_dir}/basins.csv")  # path to csv of pour points
     basins = pd.read_csv(f"{input_dir}/basins_random.csv")
-
-    fname = "watershed_points2"       # CHANGE ME!!!
-    output_fname = os.path.join(output_dir, fname)
-    delineate(output_dir=output_dir, output_fname=output_fname,
-              basins=basins)
+    delineate(output_dir=output_dir, basins=basins)
 
 if __name__ == "__main__":
     main()

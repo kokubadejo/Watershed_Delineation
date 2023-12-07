@@ -327,8 +327,7 @@ def delineate():
 
     if VERBOSE: print("Finding out which Level 2 megabasin(s) your points are in")
     # This file has the merged "megabasins_gdf" in it
-    merit_basins_shp = 'data/shp/basins_level2/merit_hydro_vect_level2.shp'
-    megabasins_gdf = gpd.read_file(merit_basins_shp)
+    megabasins_gdf = gpd.read_file(MERIT_BASINS)
     # The CRS string in the shapefile is EPSG 4326 but does not match verbatim
     megabasins_gdf.to_crs(PROJ_WGS84, inplace=True)
     if not megabasins_gdf.loc[0].BASIN == 11:
