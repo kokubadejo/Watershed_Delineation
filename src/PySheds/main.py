@@ -149,8 +149,9 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", basins=No
     # Specify pour point
     print("Specify pour point")    
     lats = basins['lat'].tolist()
-    lons = basins['lng'].tolist()
+    lons = basins['lon'].tolist()
     st_ids = basins[id_field].tolist()
+    # watersheds = []
 
     for index in range(0, len(lats)):
         x = lons[index]
@@ -174,7 +175,6 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", basins=No
         # catch_view = grid.view(catch, dtype=np.uint8)
 
         watershed = grid.polygonize(data=catch, nodata=grid.nodata)
-        
         watershed_dict = {st_id: []}
         
         # Merging Multi-Part Watersheds
