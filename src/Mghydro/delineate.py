@@ -315,7 +315,7 @@ def delineate():
     if HIGH_RES:
         gages_df['lat_snap'] = np.nan
         gages_df['lng_snap'] = np.nan
-        gages_df['snap_dist'] = 0
+        gages_df['snap_dist_m'] = 0
 
     # Convert gages_df to a GeoPandas GeoDataFrame (adds geography, lets us do geo. operations)
     coordinates = [Point(xy) for xy in zip(gages_df['lng'], gages_df['lat'])]
@@ -552,13 +552,13 @@ def delineate():
             # Get the (approx.) snap distance
             geod = pyproj.Geod(ellps='WGS84')
             snap_dist = geod.inv(lng, lat, lng_snap, lat_snap)[2]
-            gages_df.at[wid, 'snap_dist'] = sigfig.round(snap_dist, 2)
+            gages_df.at[wid, 'snap_dist_m'] = sigfig.round(snap_dist, 2)
             gages_df.at[wid, 'lat_snap'] = round(lat_snap, 3)
             gages_df.at[wid, 'lng_snap'] = round(lng_snap, 3)
 
             # Add the upstream area of the delineated watershed to the DataFrame
-            up_area = sigfig.round(up_area, 3)
-            mybasin_gdf['area_calc (sqkm)'] = up_area       # edited
+            # up_area = sigfig.round(up_area, 3)
+            mybasin_gdf['area_calc_sqkm'] = up_area       # edited
             gages_df.at[wid, 'area_calc'] = up_area
 
             if bAreas:
