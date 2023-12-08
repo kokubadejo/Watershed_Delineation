@@ -156,6 +156,26 @@ python ravenpy_delineation.py
   ```
   $ pip install -r requirements.txt
   ```
+  - if this doesn't work, try installing the packages individually:
+     ```
+     pip install geopandas~=0.13.2
+     pip install shapely~=2.0.2
+     pip install pandas~=2.1.3
+     pip install Jinja2~=3.1.2
+     pip install matplotlib~=3.8.1
+     pip install numpy~=1.26.2
+     pip install pysheds~=0.3.5
+     pip install sigfig~=1.3.3
+     pip install pyproj~=3.6.1
+     ```
+  - the following package versions also work:
+     ```
+     pip install pandas~=2.0.3
+     pip install pandas~=1.5.3
+     pip install matplotlib~=3.7.4
+     pip install numpy~=1.24.4
+     pip install pyproj~=3.5.0
+     ```
 - install pygeos
   ```
   pip install pygeos
@@ -192,8 +212,9 @@ python ravenpy_delineation.py
   pip install area
   ```
 
-- Note
-  - replace the dem and basin files with your path and filenames
+- **Note**
+  - replace the flow direction and accumulation files with your path and filenames
+  - The files used in the script were downloaded from [HydroSheds Core Products](https://www.hydrosheds.org/hydrosheds-core-downloads). The 15s North and Central America data was used.
  
 - navigate to the directory of python script:
   ```

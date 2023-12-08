@@ -220,8 +220,8 @@ def main():
 
     # Gather all shapefiles in directory - ENSURE THEY ALL HAVE THE SAME CRS
     shape_paths = dict()
-    # for path in Path(shpfolder_path).rglob('*.shp'):
-    for path in Path(shpfolder_path).rglob('*.geojson'):
+    for path in Path(shpfolder_path).rglob('*.shp'):
+    # for path in Path(shpfolder_path).rglob('*.geojson'):
         # shape_paths[path.name[:-4]] = path.parent
         # shape_paths[path.name[:-4]] = os.path.join(str(path.parent), path.name)
         shape_paths[path.name[:-8]] = os.path.join(str(path.parent), path.name)
