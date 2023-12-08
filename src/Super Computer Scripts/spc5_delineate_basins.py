@@ -175,10 +175,10 @@ for iistation,istation in enumerate(stations):
         config.OUTPUT_DIR = os.path.abspath(output_folder)
         config.OUTPUT_PREFIX = json_name + '_'
 
-        print("my paths")
-        print(config.OUTLETS_CSV)
-        print(config.OUTPUT_DIR)
-        print(config.OUTPUT_PREFIX)
+        # print("my paths")
+        # print(config.OUTLETS_CSV)
+        # print(config.OUTPUT_DIR)
+        # print(config.OUTPUT_PREFIX)
 
         from delineate import delineate
 

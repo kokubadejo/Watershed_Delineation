@@ -31,7 +31,8 @@ def make_map(df: pd.DataFrame) -> bool:
     """
 
     input:
-        df: a Pandas dataframe with the cols [id, lat, lng, name, area_reported, area_calc, result]
+        df: a Pandas dataframe with the cols [id, lat, lng, name, area_reported, area_calc_sqkm,
+        result]
 
     returns:
         True if it successfully wrote the file viewer.html.
@@ -41,7 +42,7 @@ def make_map(df: pd.DataFrame) -> bool:
     # Reorganize the columns a bit so it looks good.
     # Here is the full set of columns, and the order I like
     cols_sorted = ['id', 'name', 'result', 'lat', 'lng', 'lat_snap', 'lng_snap', 'snap_dist', 'area_reported',
-                   'area_calc', 'perc_diff']
+                   'area_calc_sqkm', 'perc_diff']
 
     #if not HIGH_RES:
     #    cols_sorted.remove('lat_snap')
@@ -51,16 +52,20 @@ def make_map(df: pd.DataFrame) -> bool:
     # Get the actual columns in our table, because it can vary depending on user inputs.
     df['id'] = df.index
     cols = df.columns.tolist()
+    to_remove = []
     for col in cols_sorted:
         if col not in cols:
-            cols_sorted.remove(col)
+            to_remove.append(col)
+            # cols_sorted.remove(col)
+    for c in to_remove:
+        cols_sorted.remove(c)
 
     df = df[cols_sorted]
 
     if 'area_reported' in cols:
         df['area_reported'] = df['area_reported'].map('{:,.0f}'.format)
 
-    df['area_calc'] = df['area_calc'].map('{:,.0f}'.format)
+    df['area_calc_sqkm'] = df['area_calc_sqkm'].map('{:,.0f}'.format)
     df['lat'] = df['lat'].map('{:,.3f}'.format)
     df['lng'] = df['lng'].map('{:,.3f}'.format)
 
@@ -91,7 +96,7 @@ def make_map(df: pd.DataFrame) -> bool:
         'lng_snap': 'Lng snap',
         'snap_dist': 'Snap dist (m)',
         'area_reported': 'Area est. (km<sup>2</sup>)',
-        'area_calc': 'Area calc. (km<sup>2</sup>)',
+        'area_calc_sqkm': 'Area calc. (km<sup>2</sup>)',
         'perc_diff': "Perc. diff."
     }
 

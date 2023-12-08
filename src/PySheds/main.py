@@ -142,7 +142,7 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fn
     print("Compute flow directions")
     # fdir = grid.flowdir(dem)
     grid = Grid.from_raster(fldir_file)
-    fdir = grid.read_raster(fldir_file, window=grid.bbox, window_crs=grid.crs)
+    fdir = grid.read_raster(fldir_file)
 
     
     # Delineate a catchment
@@ -163,12 +163,12 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fn
         # --------------------------
         print("Calculate flow accumulation")
         # acc = grid.accumulation(fdir)
-        bbox = calculate_bbox(y, x, 150)
+        bbox = calculate_bbox(y, x, 5)
         acc = grid.read_raster(flacc_file, window=bbox, window_crs=grid.crs)
 
         # Snap pour point to high accumulation cell
         print("Snapping pour point")
-        x_snap, y_snap = grid.snap_to_mask(acc > 9000, (x, y))
+        x_snap, y_snap = grid.snap_to_mask(acc > 1000, (x, y))
 
         # Delineate the catchment
         print("Delineate the catchment")

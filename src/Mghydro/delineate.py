@@ -369,7 +369,7 @@ def delineate():
 
     # Now add fields to gages_df so we can reuse it to create a table to output to CSV
     gages_df.set_index('id', inplace=True)
-    gages_df['area_calc'] = 0
+    gages_df['area_calc_sqkm'] = 0
     gages_df['result'] = "failed"
     if bAreas:
         gages_df['perc_diff'] = 0
@@ -559,7 +559,7 @@ def delineate():
             # Add the upstream area of the delineated watershed to the DataFrame
             # up_area = sigfig.round(up_area, 3)
             mybasin_gdf['area_calc_sqkm'] = up_area       # edited
-            gages_df.at[wid, 'area_calc'] = up_area
+            gages_df.at[wid, 'area_calc_sqkm'] = up_area
 
             if bAreas:
                 area_reported = gages_df.loc[wid].area_reported
