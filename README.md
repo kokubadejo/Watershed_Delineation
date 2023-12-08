@@ -212,8 +212,9 @@ python ravenpy_delineation.py
   pip install area
   ```
 
-- Note
-  - replace the dem and basin files with your path and filenames
+- **Note**
+  - replace the flow direction and accumulation files with your path and filenames
+  - The files used in the script were downloaded from [HydroSheds Core Products](https://www.hydrosheds.org/hydrosheds-core-downloads). The 15s North and Central America data was used.
  
 - navigate to the directory of python script:
   ```
