@@ -16,8 +16,74 @@ The following steps describe the process to setup the environments and packages 
    ```
    conda config --add channels conda-forge
    ```
+   
+### **MacOS Setup**
+```
+conda create --name env-3.9-delineation python=3.9
+conda activate env-3.9-delineation
+​
+conda config --add channels conda-forge
+conda install -n env-3.9-delineation -c conda-forge geopandas
+conda install -n env-3.9-delineation -c conda-forge folium
+conda install -n env-3.9-delineation -c conda-forge matplotlib
+conda install -n env-3.9-delineation -c conda-forge contextily
+conda install -n env-3.9-delineation -c conda-forge pygeos
+conda install -n env-3.9-delineation -c conda-forge sigfig
+conda install -n env-3.9-delineation -c conda-forge pysheds
+​
+cd src/Read\ Shapefiles
+python read_plot_shp.py data/02GB001/ png
+​
+cd src/Super\ Computer\ Scriptsopen rea
+python spc5_delineate_basins.py -i "Total_Phosphorus_mixed_forms_obs.json" -o "test" -s 10 -e 15
+```
+
+### **Super-Compouter (GRAHAM) Setup**
+```​
+git clone https://github.com/kokubadejo/Watershed_Delineation.git
+​
+cd Watershed_Delineation/
+​
+module purge
+module load StdEnv/2020 netcdf/4.7.4 gcc/9.3.0 gdal/3.5.1
+module load mpi4py/3.1.3 proj/9.0.1
+module load geos/3.10.2
+module load nco/5.0.6
+module load python/3.10.2
+​
+mkdir env-3.10
+virtualenv --no-download env-3.10
+source env-3.10/bin/activate
+​
+pip install --no-index --upgrade pip
+​
+pip install netCDF4 --no-index
+pip install GDAL --no-index
+pip install numpy --no-index
+pip install argparse --no-index
+pip install geopandas --no-index
+​
+pip install folium --no-index
+pip install matplotlib --no-index
+pip install contextily
+pip install pygeos --no-index
+pip install sigfig
+pip install pysheds --no-index
+​
+​
+scp -r data username@gra-platform.computecanada.ca:/home/<user>/path/to/folder/.
+scp -r src/PySheds/data/Rasters username@gra-platform.computecanada.ca:/home/<user>/path/to/folder/src/PySheds/data/.
+scp -r src/Super\ Computer\ Scripts/Total_Phosphorus_mixed_forms_obs.json username@gra-platform.computecanada.ca:/home/<user>/path/to/folder/src/Super\ Computer\ Scripts/.
+​
+cd src/Read\ Shapefiles
+python read_plot_shp.py data/02GB001/ png
+​
+cd src/Super\ Computer\ Scripts
+python spc5_delineate_basins.py -i "Total_Phosphorus_mixed_forms_obs.json" -o "test" -s 10 -e 15
+```
 
 Note: The example figure was gotten from running the script with the grand river watershed shapefiles gotten from manual, ravenpy and the example (Basinmaker?) delineations
+
 ![Figure](https://github.com/kokubadejo/Watershed_Delineation/assets/90711306/4a5ebbf9-7019-4281-bf19-4b5d48eee39b)
 
 # Getting Started

@@ -21,7 +21,7 @@
 # along with Juliane Mai's personal code library.  If not, see <http://www.gnu.org/licenses/>.
 #
 # pyenv activate env-385-new
-# python 5_delineate_basins.py -i "Total_Phosphorus_mixed_forms_obs.json" -o "test" -s 10 -e 15
+# python spc5_delineate_basins.py -i "Total_Phosphorus_mixed_forms_obs.json" -o "test" -s 10 -e 15
 
 
 import os
@@ -167,11 +167,11 @@ for iistation,istation in enumerate(stations):
         sys.path.append(os.path.join(dir_path, "..", "Mghydro"))
         print(sys.path)
 
-        file = 'point.csv'
-        basin_csv = basin.to_csv(file)
+        filename = 'point_{}_{}.csv'.format(start,end)
+        basin_csv = basin.to_csv(filename)
 
         import config
-        config.OUTLETS_CSV = os.path.abspath(file)
+        config.OUTLETS_CSV = os.path.abspath(filename)
         config.OUTPUT_DIR = os.path.abspath(output_folder)
         config.OUTPUT_PREFIX = json_name + '_'
 
@@ -191,11 +191,11 @@ for iistation,istation in enumerate(stations):
 
         os.chdir(prev_path)
 
-        if(os.path.exists(file) and os.path.isfile(file)):
-            os.remove(file)
+        if(os.path.exists(filename) and os.path.isfile(filename)):
+            os.remove(filename)
 
     elif method == "pysheds":
-        sys.path.append(dir_path + os.path.join("\\..", "Pysheds"))
+        sys.path.append(os.path.join(dir_path, "..", "Pysheds"))
         print(sys.path)
         import main
 
