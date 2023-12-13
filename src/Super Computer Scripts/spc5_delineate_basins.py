@@ -165,7 +165,7 @@ for iistation,istation in enumerate(stations):
         # watershed delineation by changing the module and delineation
         # function being imported
         sys.path.append(os.path.join(dir_path, "..", "Mghydro"))
-        print(sys.path)
+        # print(sys.path)
 
         filename = 'point_{}_{}.csv'.format(start,end)
         basin_csv = basin.to_csv(filename)
