@@ -16,7 +16,7 @@
 
 # 100 stations = 19 min
 
-# job ID: 13794580        # Inorganic_nitrogen_(nitrate_and_nitrite)_obs.json
+# job ID: 13865883        # Inorganic_nitrogen_(nitrate_and_nitrite)_obs.json
 # ---> no of stations:  7870    (grep -c LatitudeNormalized "Inorganic_nitrogen_(nitrate_and_nitrite)_obs.json")
 # ---> ntasks = 79
 json_file="Inorganic_nitrogen_(nitrate_and_nitrite)_obs.json"
