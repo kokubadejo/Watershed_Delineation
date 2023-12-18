@@ -23,6 +23,7 @@ or create an Issue on the GitHub repo: https://github.com/mheberger/delineator
 """
 import warnings
 
+import math
 import numpy as np
 import pickle
 import pandas as pd
@@ -360,7 +361,7 @@ def delineate():
     if VERBOSE: 
         print(f"Your watershed outlets are in {len(basins)} basin(s)")
         if len(basins) == 0:
-            print(f"KO: COASTAL BASIN?")
+            print(f"KO: COASTAL BASIN? Type 1")
 
     # Find any outlet points that are not in any Level 2 basin, and add these to the fail list
     # Look for any rows that are in gages_df that are not in basins_df
@@ -444,6 +445,10 @@ def delineate():
             terminal_comid = gages_joined['COMID'].iloc[i]
             
             # Get the upstream area of the unit catchment we found, according to MERIT-Basins
+            if math.isnan(terminal_comid):
+                print(f"KO: COASTAL BASIN? Type 2")
+                return
+                
             up_area = rivers_gdf.loc[terminal_comid].uparea
 
             # If MATCH_AREAS is True and the user provided the area in the outlets CSV file,
