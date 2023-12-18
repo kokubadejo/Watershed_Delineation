@@ -403,11 +403,7 @@ def delineate():
         # Adds the fields COMID and unitarea
         if VERBOSE: print(f"Performing spatial join on {num_gages_in_basin} outlet points in basin #{basin}")
         gages_in_basin.drop(['index_right'], axis=1, inplace=True)
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> 1fc8b8a478af0995b5d184395929db5109a7fe12
         validate_search_distance()
         if SEARCH_DIST == 0:
             gages_joined = gpd.sjoin(gages_in_basin, catchments_gdf, how="left", predicate="intersects")
