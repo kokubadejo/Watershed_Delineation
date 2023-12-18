@@ -16,14 +16,14 @@
 
 # 100 stations = 19 min
 
-# job ID: 13527971        # Inorganic_nitrogen_(nitrate_and_nitrite)_obs.json
+# job ID: 13794580        # Inorganic_nitrogen_(nitrate_and_nitrite)_obs.json
 # ---> no of stations:  7870    (grep -c LatitudeNormalized "Inorganic_nitrogen_(nitrate_and_nitrite)_obs.json")
 # ---> ntasks = 79
 json_file="Inorganic_nitrogen_(nitrate_and_nitrite)_obs.json"
 
 # job ID:        # Total_Phosphorus_mixed_forms_obs.json
-# ---> no of stations: 14309    (grep -c LatitudeNormalized "Total_Phosphorus_mixed_forms_obs.json")
-# ---> ntasks = 144
+# ---> no of stations: 17872    (grep -c LatitudeNormalized "Total_Phosphorus_mixed_forms_obs.json")
+# ---> ntasks = 179
 # json_file="Total_Phosphorus_mixed_forms_obs.json"
 
 
@@ -55,3 +55,9 @@ end_idx=$(( ${end_idx} < ${nstations} ? ${end_idx} : ${nstations} )) # make sure
 
 # run script
 python spc5_delineate_basins.py -i ${json_file} -o "/scratch/julemai/delineation" -s ${start_idx} -e ${end_idx}
+
+
+# cd src/Super\ Computer\ Scripts
+# for (( ii=1 ; ii<=79 ; ii++ )) ; do nn=$(grep "Writing output for watershed" slurm-13822371_${ii}.out | wc -l) ; start=$(( (ii-1)*100+1)) ; end=$(( ii*100 )); echo "Indexes: ${start} to ${end} --> delineated ${nn} watersheds (should be 100)" ; done
+
+# find /scratch/julemai/delineation/ -name *.geojson | wc -l

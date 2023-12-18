@@ -20,13 +20,13 @@ HIGH_RES = True
 # Directory containing the MERIT basin-scale flow direction rasters (.tif).
 # Download from
 # For all paths, do not include a trailing slash.
-MERIT_FDIR_DIR = "/Users/j6mai/Documents/GitHub/Watershed_Delineation/data/MERIT/raster/flowdir_basins"
+MERIT_FDIR_DIR = "/home/julemai/projects/rpp-julemai/julemai/Watershed_Delineation/data/MERIT/raster/flowdir_basins"
 
 # Directory containing the MERIT the flow accumulation rasters (.tif files).
-MERIT_ACCUM_DIR = "/Users/j6mai/Documents/GitHub/Watershed_Delineation/data/MERIT/raster/accum_basins"
+MERIT_ACCUM_DIR = "/home/julemai/projects/rpp-julemai/julemai/Watershed_Delineation/data/MERIT/raster/accum_basins"
 
 # File containing the MERIT basin shapefiles v2 (.shp files).
-MERIT_BASINS = "/Users/j6mai/Documents/GitHub/Watershed_Delineation/data/MERIT/shp/basins_level2/merit_hydro_vect_level2.shp"
+MERIT_BASINS = "/home/julemai/projects/rpp-julemai/julemai/Watershed_Delineation/data/MERIT/shp/basins_level2/merit_hydro_vect_level2.shp"
 
 # Set to True if you want the script to write status messages to the console
 VERBOSE = True
@@ -36,14 +36,14 @@ VERBOSE = True
 PLOTS = False
 
 # Folder where you have stored the Merit-BASINS catchment shapefiles.
-HIGHRES_CATCHMENTS_DIR = "/Users/j6mai/Documents/GitHub/Watershed_Delineation/data/MERIT/shp/merit_catchments"
+HIGHRES_CATCHMENTS_DIR = "/home/julemai/projects/rpp-julemai/julemai/Watershed_Delineation/data/MERIT/shp/merit_catchments"
 
 # Location of simplified catchment boundaries. Download the files from
 # https://mghydro.org/watersheds/share/catchments_simplified.zip
-LOWRES_CATCHMENTS_DIR = "/Users/j6mai/Documents/GitHub/Watershed_Delineation/data/MERIT/shp/catchments_simplified"
+LOWRES_CATCHMENTS_DIR = "/home/julemai/projects/rpp-julemai/julemai/Watershed_Delineation/data/MERIT/shp/catchments_simplified"
 
 # Folder where you have stored the MERIT-Basins rivers shapefiles
-RIVERS_DIR = "/Users/j6mai/Documents/GitHub/Watershed_Delineation/data/MERIT/shp/merit_catchments"
+RIVERS_DIR = "/home/julemai/projects/rpp-julemai/julemai/Watershed_Delineation/data/MERIT/shp/merit_catchments"
 
 
 # Folder where the script will write the output GeoJSON files or shapefiles
@@ -70,7 +70,8 @@ PICKLE_DIR = 'Mghydro/pkl'
 
 # Threshold for watershed size in km² above which the script will revert to
 # low-resolution mode
-LOW_RES_THRESHOLD = 50000
+# LOW_RES_THRESHOLD = 50000
+LOW_RES_THRESHOLD = 500000000000000
 
 # If the requested watershed outlet is not inside a catchment, how far away
 # from the point should we look for the nearest catchment (in degrees)
