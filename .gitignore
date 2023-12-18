@@ -1,5 +1,6 @@
 **.DS_Store
 
+kasope_env.dat
 data/MERIT
 
 src/*/*/__pycache__/*
@@ -13,6 +14,8 @@ src/Mghydro/py/__pycache__
 src/PySheds/data/Rasters/hyd_na*
 
 src/Super Computer Scripts/Mghydro/config.py
+src/Super Computer Scripts/point*.csv
+src/Super Computer Scripts/*_obs.json
 
 src/Read Shapefiles/Figure.png
 src/Super Computer Scripts/test

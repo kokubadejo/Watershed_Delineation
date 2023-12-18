@@ -403,7 +403,11 @@ def delineate():
         # Adds the fields COMID and unitarea
         if VERBOSE: print(f"Performing spatial join on {num_gages_in_basin} outlet points in basin #{basin}")
         gages_in_basin.drop(['index_right'], axis=1, inplace=True)
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 1fc8b8a478af0995b5d184395929db5109a7fe12
         validate_search_distance()
         if SEARCH_DIST == 0:
             gages_joined = gpd.sjoin(gages_in_basin, catchments_gdf, how="left", predicate="intersects")
@@ -697,15 +701,17 @@ def load_gdf(geotype: str, basin: int, high_resolution: bool) -> gpd.GeoDataFram
             shapefile = f"{directory}/cat_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01_bugfix1.shp"
         else:
             directory = LOWRES_CATCHMENTS_DIR
-            shapefile = f"{directory}/cat_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
-        # shapefile = f"{directory}/cat_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
-        
+        shapefile = f"{directory}/cat_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
+        if not os.path.isfile(shapefile):
+            shapefile = f"{directory}/cat_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01_bugfix1.shp"
+        if not os.path.isfile(shapefile):
+            raise Exception(f"Could not find the file: {shapefile}")
     elif geotype == "rivers":
-        # shapefile = f"{RIVERS_DIR}/riv_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
-        shapefile = f"{RIVERS_DIR}/riv_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01_bugfix1.shp"
-
-    if not os.path.isfile(shapefile):
-        raise Exception(f"Could not find the file: {shapefile}")
+        shapefile = f"{RIVERS_DIR}/riv_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
+        if not os.path.isfile(shapefile):
+            shapefile = f"{RIVERS_DIR}/riv_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01_bugfix1.shp"
+        if not os.path.isfile(shapefile):
+            raise Exception(f"Could not find the file: {shapefile}")
 
     if VERBOSE: print(f"Reading geodata in {shapefile}")
     gdf = gpd.read_file(shapefile)
