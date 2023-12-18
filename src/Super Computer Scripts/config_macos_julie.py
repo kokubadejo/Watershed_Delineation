@@ -70,7 +70,8 @@ PICKLE_DIR = 'Mghydro/pkl'
 
 # Threshold for watershed size in km² above which the script will revert to
 # low-resolution mode
-LOW_RES_THRESHOLD = 50000
+# LOW_RES_THRESHOLD = 50000
+LOW_RES_THRESHOLD = 500000000000000
 
 # If the requested watershed outlet is not inside a catchment, how far away
 # from the point should we look for the nearest catchment (in degrees)

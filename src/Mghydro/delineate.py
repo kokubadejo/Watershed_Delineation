@@ -357,7 +357,10 @@ def delineate():
     basins_df = gages_basins_join.groupby("BASIN").id.nunique()
     basins = basins_df.index.tolist()
 
-    if VERBOSE: print(f"Your watershed outlets are in {len(basins)} basin(s)")
+    if VERBOSE: 
+        print(f"Your watershed outlets are in {len(basins)} basin(s)")
+        if len(basins) == 0:
+            print(f"KO: COASTAL BASIN?")
 
     # Find any outlet points that are not in any Level 2 basin, and add these to the fail list
     # Look for any rows that are in gages_df that are not in basins_df
@@ -400,9 +403,11 @@ def delineate():
         # Adds the fields COMID and unitarea
         if VERBOSE: print(f"Performing spatial join on {num_gages_in_basin} outlet points in basin #{basin}")
         gages_in_basin.drop(['index_right'], axis=1, inplace=True)
+        
         validate_search_distance()
         if SEARCH_DIST == 0:
             gages_joined = gpd.sjoin(gages_in_basin, catchments_gdf, how="left", predicate="intersects")
+
         else:
             # This line generates a warning about how its bad to use distances in unprojected geodata. OK
             with warnings.catch_warnings():
@@ -410,6 +415,7 @@ def delineate():
                 gages_joined = gpd.sjoin_nearest(gages_in_basin, catchments_gdf, max_distance=SEARCH_DIST)
 
         gages_joined.rename(columns={"index_right": "COMID"}, inplace=True)
+        # catchments_gdf.to_file('catchments.geojson')
 
         # For any gages for which we could not find a unit catchment, add them to failed
         gages_matched = gages_joined['id'].tolist()
@@ -436,7 +442,7 @@ def delineate():
 
             # The terminal comid is the unit catchment that contains (overlaps) the outlet point
             terminal_comid = gages_joined['COMID'].iloc[i]
-
+            
             # Get the upstream area of the unit catchment we found, according to MERIT-Basins
             up_area = rivers_gdf.loc[terminal_comid].uparea
 
@@ -579,8 +585,6 @@ def delineate():
             if OUTPUT_EXT != "":
                 with warnings.catch_warnings():
                     warnings.simplefilter(action='ignore', category=UserWarning)
-                    print("my output")
-                    print(mybasin_gdf)
                     mybasin_gdf.to_file(outfile)
 
             # Create the HTML Viewer Map?
@@ -685,16 +689,20 @@ def load_gdf(geotype: str, basin: int, high_resolution: bool) -> gpd.GeoDataFram
             if VERBOSE: print(f"Fetching BASIN # {basin} catchment data from pickle file.")
             gdf = pickle.load(open(pickle_fname, "rb"))
             return gdf
-
+    
     # Open the shapefile for the basin
     if geotype == "catchments":
         if high_resolution:
             directory = HIGHRES_CATCHMENTS_DIR
+            shapefile = f"{directory}/cat_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01_bugfix1.shp"
         else:
             directory = LOWRES_CATCHMENTS_DIR
-        shapefile = f"{directory}/cat_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
+            shapefile = f"{directory}/cat_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
+        # shapefile = f"{directory}/cat_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
+        
     elif geotype == "rivers":
-        shapefile = f"{RIVERS_DIR}/riv_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
+        # shapefile = f"{RIVERS_DIR}/riv_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01.shp"
+        shapefile = f"{RIVERS_DIR}/riv_pfaf_{basin}_MERIT_Hydro_v07_Basins_v01_bugfix1.shp"
 
     if not os.path.isfile(shapefile):
         raise Exception(f"Could not find the file: {shapefile}")

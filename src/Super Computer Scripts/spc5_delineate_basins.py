@@ -118,6 +118,7 @@ if end is None:
 # -------------------------------
 
 stations = []
+ids = []
 for dd in data['value'][start:end]:
 
     tmp = { 'id': dd['Id'],
@@ -125,14 +126,11 @@ for dd in data['value'][start:end]:
             'lng': dd['LongitudeNormalized'],
           }
     stations.append(tmp)
+    ids.append(dd['Id'])
 
 # -------------------------------
 # perform delineation
 # -------------------------------
-print("stations")
-print(stations)
-print(len(stations))
-
 for iistation,istation in enumerate(stations):
 
     print("")
@@ -158,14 +156,14 @@ for iistation,istation in enumerate(stations):
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
-    if method in [None, 'mghydro']:  # Mghydro as default method
+    if (method in [None, 'mghydro']):  # Mghydro as default method
 
 
         # change the next two lines to use a different method for the
         # watershed delineation by changing the module and delineation
         # function being imported
         sys.path.append(os.path.join(dir_path, "..", "Mghydro"))
-        print(sys.path)
+        # print(sys.path)
 
         filename = 'point_{}_{}.csv'.format(start,end)
         basin_csv = basin.to_csv(filename)
@@ -175,18 +173,14 @@ for iistation,istation in enumerate(stations):
         config.OUTPUT_DIR = os.path.abspath(output_folder)
         config.OUTPUT_PREFIX = json_name + '_'
 
-        # print("my paths")
-        # print(config.OUTLETS_CSV)
-        # print(config.OUTPUT_DIR)
-        # print(config.OUTPUT_PREFIX)
-
         from delineate import delineate
 
         prev_path = os.getcwd()
         target_dir = sys.path[-1]
 
         os.chdir(target_dir)
-
+        
+        print(f"station: {istation['id']}")
         delineate()
 
         os.chdir(prev_path)
@@ -196,7 +190,13 @@ for iistation,istation in enumerate(stations):
 
     elif method == "pysheds":
         sys.path.append(os.path.join(dir_path, "..", "Pysheds"))
-        print(sys.path)
+        
         import main
 
         main.delineate(output_dir=output_folder, output_fname=json_name+'_', basins=basin)
+
+print("")
+print("---------------------------------------------------------------------")
+print("The Ids are: ")
+print(ids, len(ids))
+print("---------------------------------------------------------------------")

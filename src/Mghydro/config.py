@@ -9,11 +9,11 @@ on how to download the input data.
 """
 
 # Path to your CSV file with the watershed outlet data
-OUTLETS_CSV = ''
-# OUTLETS_CSV = "C:\\Users\\kokubade\\OneDrive - University of " \
-#               "Waterloo\\Documents\\Co-op Fall 2023 Docs\\Watershed " \
-#               "Delineation\\Other Delineation " \
-#               "Tools\\Mghydro Delineator\\test_data\\basins_random.csv"
+# OUTLETS_CSV = ''
+OUTLETS_CSV = "C:\\Users\\kokubade\\OneDrive - University of " \
+              "Waterloo\\Documents\\Co-op Fall 2023 Docs\\Watershed " \
+              "Delineation\\Other Delineation " \
+              "Tools\\Mghydro Delineator\\test_data\\basins_random.csv"
 
 # Set to True for "higher resolution" mode or False for "lower resolution."
 HIGH_RES = True
@@ -43,7 +43,7 @@ PLOTS = False
 HIGHRES_CATCHMENTS_DIR = "C:/Users/kokubade/OneDrive - University of " \
                          "Waterloo/Documents/Co-op Fall 2023 Docs/Watershed " \
                          "Delineation/Other Delineation Tools/Mghydro " \
-                         "Delineator/test_data/pfaf_level_02"
+                         "Delineator/test_data/pfaf_level_02_bug_fix"
 
 # Location of simplified catchment boundaries. Download the files from
 # https://mghydro.org/watersheds/share/catchments_simplified.zip
@@ -55,9 +55,19 @@ LOWRES_CATCHMENTS_DIR = "C:/Users/kokubade/OneDrive - University of " \
 # Folder where you have stored the MERIT-Basins rivers shapefiles
 RIVERS_DIR = "C:/Users/kokubade/OneDrive - University of " \
              "Waterloo/Documents/Co-op Fall 2023 Docs/Watershed " \
-             "Delineation/Other Delineation Tools/Mghydro Delineator/test_data/pfaf_level_02"
+             "Delineation/Other Delineation Tools/Mghydro Delineator/test_data/pfaf_level_02_bug_fix"
 
 MERIT_BASINS = "data/shp/basins_level2/merit_hydro_vect_level2.shp"
+
+# HYDROBASINS = "C:/Users/kokubade/OneDrive - University of " \
+#               "Waterloo/Documents/Co-op Fall 2023 Docs/Watershed " \
+#               "Delineation/Other Delineation Tools/Mghydro Delineator/test_data" \
+#               "/hybas_na_lev01-12_v1c/"
+              
+# HYDRO_CATCHMENTS = "C:/Users/kokubade/OneDrive - University of " \
+#               "Waterloo/Documents/Co-op Fall 2023 Docs/Watershed " \
+#               "Delineation/Other Delineation Tools/Mghydro Delineator/test_data" \
+#               "/hybas_na_lev01-12_v1c/hybas_na_lev02_v1c.shp"
 
 # Folder where the script will write the output GeoJSON files or shapefiles
 OUTPUT_DIR = "output"
@@ -86,7 +96,8 @@ PICKLE_DIR = 'pkl'
 
 # Threshold for watershed size in km² above which the script will revert to
 # low-resolution mode 
-LOW_RES_THRESHOLD = 50000
+# LOW_RES_THRESHOLD = 50000
+LOW_RES_THRESHOLD = 500000000000000
 
 # If the requested watershed outlet is not inside a catchment, how far away 
 # from the point should we look for the nearest catchment (in degrees)
