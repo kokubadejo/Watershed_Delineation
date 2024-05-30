@@ -122,8 +122,8 @@ ids = []
 for dd in data['value'][start:end]:
 
     tmp = { 'id': dd['Id'],
-            'lat': dd['LatitudeNormalized'],
-            'lng': dd['LongitudeNormalized'],
+            'lat': dd['Latitude'],  # dd['LatitudeNormalized'],
+            'lng': dd['Longitude'], # dd['LongitudeNormalized'],
           }
     stations.append(tmp)
     ids.append(dd['Id'])
