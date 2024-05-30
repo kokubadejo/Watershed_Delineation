@@ -43,6 +43,7 @@ output_folder = None
 start         = None
 end           = None
 method        = None
+plot          = None
 
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Delineate all basins specified in file.''')
@@ -56,6 +57,8 @@ parser.add_argument('-e', '--end', action='store', default=end, dest='end',
                     help="Station number to end with. This is an index. If end=2, second station is last station to delineate. If end=5, 5th station is the last one that will be delineated. If None, end=len(stations). Default: None.")
 parser.add_argument('-m', '--method', action='store', default=method, dest='method',
                     help="Delineation tool to use. One of mghydro, pysheds. Default: Mghydro.")
+parser.add_argument('-p', '--plot', action='store', default=method, dest='plot',
+                    help="Plot a webmap of result. Default is 'no'")
 
 args          = parser.parse_args()
 input_file    = args.input_file
@@ -63,6 +66,7 @@ output_folder = args.output_folder
 start         = int(args.start)
 end           = int(args.end)
 method        = args.method
+plot          = args.plot
 
 if (input_file is None):
     raise ValueError("Input file needs to be specified.")
@@ -155,6 +159,8 @@ for iistation,istation in enumerate(stations):
     print(basin, json_name)
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
+    
+    point_filename = 'point_{}_{}.csv'.format(start,end)
 
     if (method in [None, 'mghydro']):  # Mghydro as default method
 
@@ -165,11 +171,11 @@ for iistation,istation in enumerate(stations):
         sys.path.append(os.path.join(dir_path, "..", "Mghydro"))
         # print(sys.path)
 
-        filename = 'point_{}_{}.csv'.format(start,end)
-        basin_csv = basin.to_csv(filename)
+        
+        basin_csv = basin.to_csv(point_filename)
 
         import config
-        config.OUTLETS_CSV = os.path.abspath(filename)
+        config.OUTLETS_CSV = os.path.abspath(point_filename)
         config.OUTPUT_DIR = os.path.abspath(output_folder)
         config.OUTPUT_PREFIX = json_name + '_'
 
@@ -185,8 +191,7 @@ for iistation,istation in enumerate(stations):
 
         os.chdir(prev_path)
 
-        if(os.path.exists(filename) and os.path.isfile(filename)):
-            os.remove(filename)
+        
 
     elif method == "pysheds":
         sys.path.append(os.path.join(dir_path, "..", "Pysheds"))
@@ -194,6 +199,18 @@ for iistation,istation in enumerate(stations):
         import main
 
         main.delineate(output_dir=output_folder, output_fname=json_name+'_', basins=basin)
+    
+    if plot == 'yes':
+        sys.path.append(os.path.join(dir_path, "..", "Read Shapefiles"))
+        
+        import read_plot_shp as plt
+        
+        watershed_filename = json_name + '_' + str(istation['id'])
+        watershed_gdf = plt.read_in_shapefile(data_dict={watershed_filename: os.path.join(output_folder, watershed_filename) + '.geojson'})
+        plt.plot_shp(shapefiles=watershed_gdf, plot='webmap', point_file=point_filename, outfile_path=os.path.join(output_folder, watershed_filename))
+        
+    if(os.path.exists(point_filename) and os.path.isfile(point_filename)):
+            os.remove(point_filename)
 
 print("")
 print("---------------------------------------------------------------------")

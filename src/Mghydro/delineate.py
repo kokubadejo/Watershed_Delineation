@@ -505,6 +505,8 @@ def delineate():
                 assert terminal_comid == B[0]
                 catchment_poly = subbasins_gdf.loc[terminal_comid].geometry
                 bSingleCatchment = len(B) == 1
+                # if wid == "178573":
+                #     print(f"wid: {wid}, basin: {basin}, lat: {lat}, lng: {lng}, catchment_poly: {subbasins_gdf.loc[terminal_comid].geometry.geoms}, bSingleCatchment: {bSingleCatchment}")
                 split_catchment_poly, lat_snap, lng_snap = py.merit_detailed.split_catchment(wid, basin, lat, lng,
                                                                                              catchment_poly,
                                                                                              bSingleCatchment)

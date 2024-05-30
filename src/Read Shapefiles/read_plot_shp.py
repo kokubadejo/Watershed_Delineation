@@ -59,8 +59,7 @@ def read_in_shapefile(data_dict=None):
     shp_gdfs = dict()
 
     for shp in data_dict:
-        print("huh")
-        print(data_dict[shp])
+        # print(data_dict[shp])
         gdf = geopandas.read_file(data_dict[shp])
         # gdf.to_crs(crs=4326)
         gdf["area"] = gdf.area
@@ -92,7 +91,7 @@ def get_colours(n):
         colours.append('#%06X' % random.randint(0, 0xFFFFFF))
     return colours
 
-def plot_shp(shapefiles=None, plot=None):
+def plot_shp(shapefiles=None, plot=None, point_file=None, outfile_path='watershed'):
     """
     Definition
     ----------
@@ -106,6 +105,8 @@ def plot_shp(shapefiles=None, plot=None):
     plot        string      String specifying the output format of the
                             plotted shapefile.
                             Allowed strings: 'png', 'webmap', 'pdf', 'jpg'
+    point_file  string      Path to point file
+    outfile_path   string      Path to output file
 
     Output
     ------
@@ -156,13 +157,13 @@ def plot_shp(shapefiles=None, plot=None):
 
         # Save plots
         if plot == 'jpg':
-            plt.savefig('watershed_Figure.jpg')
+            plt.savefig(f'{outfile_path}.jpg')
 
         elif plot == 'png':
-            plt.savefig('Figure.png')
+            plt.savefig(f'{outfile_path}.png')
 
         else:
-            plt.savefig('Figure.pdf')
+            plt.savefig(f'{outfile_path}.pdf')
         # plt.show()
 
     # Plot web map
@@ -182,23 +183,25 @@ def plot_shp(shapefiles=None, plot=None):
                                         legend=False)
 
         # Add points
-        points_df = geopandas.read_file("watersheds.csv")
+        if point_file != None:
+            points_df = geopandas.read_file(point_file)
+            
+            from shapely.geometry import Point
+            # Create a GeoDataFrame from the DataFrame
+            geometry = [Point(xy) for xy in zip(points_df['lng'], points_df['lat'])]
+            points_gdf = geopandas.GeoDataFrame(points_df, geometry=geometry)
 
-        # Create a GeoDataFrame from the DataFrame
-        geometry = [Point(xy) for xy in zip(points_df['lng'], points_df['lat'])]
-        points_gdf = geopandas.GeoDataFrame(points_df, geometry=geometry)
 
-
-        # print(points_gdf)
-        points_gdf.explore(marker_type='circle', m=m, style_kwds={'color': 'blue'},
-                           marker_kwds={'radius': 15},
-                           legend=False)
+            # print(points_gdf)
+            points_gdf.explore(marker_type='circle', m=m, style_kwds={'color': 'blue'},
+                            marker_kwds={'radius': 15},
+                            legend=False)
 
         # Add layer control
         folium.LayerControl().add_to(m)
 
         # Save map
-        m.save('watershed_base_map2.html')
+        m.save(f'{outfile_path}.html')
         # webbrowser.open(webmap_file)
 
     else:
@@ -220,10 +223,10 @@ def main():
 
     # Gather all shapefiles in directory - ENSURE THEY ALL HAVE THE SAME CRS
     shape_paths = dict()
-    for path in Path(shpfolder_path).rglob('*.shp'):
-    # for path in Path(shpfolder_path).rglob('*.geojson'):
+    # for path in Path(shpfolder_path).rglob('*.shp'):
+    for path in Path(shpfolder_path).rglob('*.geojson'):
         # shape_paths[path.name[:-4]] = path.parent
-        # shape_paths[path.name[:-4]] = os.path.join(str(path.parent), path.name)
+        shape_paths[path.name[:-4]] = os.path.join(str(path.parent), path.name)
         shape_paths[path.name[:-8]] = os.path.join(str(path.parent), path.name)
 
     if shape_paths == {}:
