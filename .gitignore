@@ -16,6 +16,7 @@ src/PySheds/data/Rasters/hyd_na*
 src/Super Computer Scripts/Mghydro/config.py
 src/Super Computer Scripts/point*.csv
 src/Super Computer Scripts/*_obs.json
+src/Super Computer Scripts/hydat_*.json
 
 src/Read Shapefiles/Figure.png
 src/Super Computer Scripts/test
@@ -23,7 +24,7 @@ src/Super Computer Scripts/Total_Phosphorus_mixed_forms_obs.json
 src/Super Computer Scripts/Mghydro/map/*
 src/Super Computer Scripts/Mghydro/pkl/*.pkl
 src/Super Computer Scripts/Mghydro/py/__pycache__
-
+src/Super Computer Scripts/slurm-*.out
 
 src/PySheds/output/watersheds.cpg
 src/PySheds/output/watersheds.dbf
@@ -32,3 +33,6 @@ src/PySheds/output/watersheds.shp
 src/PySheds/output/watersheds.shx
 src/PySheds/data/n40w090_dem.tif.ovr
 src/Super Computer Scripts/Mghydro/config.py
+
+output/
+output2/

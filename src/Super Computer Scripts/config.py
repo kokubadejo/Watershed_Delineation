@@ -126,4 +126,4 @@ MAX_DIST = 0.075
 # These values worked will in my testing, but you might try changing if the
 # outlet is not getting snapped to a river centerline properly
 THRESHOLD_SINGLE = 500
-THRESHOLD_MULTIPLE = 5000
+THRESHOLD_MULTIPLE = 10000

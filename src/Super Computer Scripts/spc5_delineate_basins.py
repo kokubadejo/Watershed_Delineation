@@ -160,7 +160,7 @@ for iistation,istation in enumerate(stations):
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     
-    point_filename = 'point_{}_{}.csv'.format(start,end)
+    point_filename = json_name+'_point_{}_{}.csv'.format(start,end)
 
     if (method in [None, 'mghydro']):  # Mghydro as default method
 
