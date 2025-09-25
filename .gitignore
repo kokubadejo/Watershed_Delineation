@@ -34,5 +34,7 @@ src/PySheds/output/watersheds.shx
 src/PySheds/data/n40w090_dem.tif.ovr
 src/Super Computer Scripts/Mghydro/config.py
 
+src/Whitebox/WhiteboxTools/img/._*
+
 output/
 output2/

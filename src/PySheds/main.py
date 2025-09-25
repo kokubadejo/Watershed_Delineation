@@ -34,6 +34,7 @@ import pandas as pd
 from shapely.geometry import Polygon
 from shapely.ops import unary_union
 from area import area
+import numpy as np
 
 #-------------------------------------------------------------------------------
 # Constants
@@ -148,55 +149,76 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fn
     # Delineate a catchment
     # ---------------------
     # Specify pour point
-    print("Specify pour point")    
+    print("Specify pour point")
+    print("basins columns: {}".format(basins.columns))
     lats = basins['lat'].tolist()
     lons = basins['lng'].tolist()
     st_ids = basins[id_field].tolist()
     # watersheds = []
 
     for index in range(0, len(lats)):
+
+        print("Working on basin {} of {} ... (basin={})".format(index+1,len(lats),st_ids[index]))
+
         x = lons[index]
         y = lats[index]
         st_id = st_ids[index]
+
+        filename = f"{output_dir}/{output_fname}{st_id}.geojson"
+
+        if not (os.path.exists(filename) and os.path.isfile(filename)):
         
-        # Calculate flow accumulation
-        # --------------------------
-        print("Calculate flow accumulation")
-        # acc = grid.accumulation(fdir)
-        bbox = calculate_bbox(y, x, 5)
-        acc = grid.read_raster(flacc_file, window=bbox, window_crs=grid.crs)
+            # Calculate flow accumulation
+            # --------------------------
+            print("    Read flow accumulation")
+            # acc = grid.accumulation(fdir)
+            bbox = calculate_bbox(y, x, 5)
+            acc = grid.read_raster(flacc_file, window=bbox, window_crs=grid.crs)
 
-        # Snap pour point to high accumulation cell
-        print("Snapping pour point")
-        x_snap, y_snap = grid.snap_to_mask(acc > 1000, (x, y))
+            # Snap pour point to high accumulation cell
+            print("    Snapping pour point")
+            print("    x: {}, y: {}".format(x,y))
+            # print("shape(acc): ", np.shape(acc))
+            # print("acc > 1000: ", np.sum(acc>1000))
+            # print("acc < 1000: ", np.sum(acc<1000))
+            # making sure that at least one flow acc value is larger than threshold
+            thres = 1000
+            while (np.sum(acc>thres) == 0) and (thres > 0):
+                thres -= 100
+            if (np.sum(acc>thres) == 0):
+                print("    >>>> Basin cant be delineated. No flow accumulation grid cell found")
+                continue
+            else:
+                print("    Snap threshold for flow accumulation used: {}".format(thres))
+                x_snap, y_snap = grid.snap_to_mask(acc > thres, (x, y))
+                print("    x_snap: {}, y_snap:{}".format(x_snap,y_snap))
 
-        # Delineate the catchment
-        print("Delineate the catchment")
-        catch = grid.catchment(x=x_snap, y=y_snap, fdir=fdir, xytype='coordinate')
-        # catch_view = grid.view(catch, dtype=np.uint8)
+            # Delineate the catchment
+            print("    Delineate the catchment")
+            catch = grid.catchment(x=x_snap, y=y_snap, fdir=fdir, xytype='coordinate')
+            # catch_view = grid.view(catch, dtype=np.uint8)
 
-        watershed = grid.polygonize(data=catch, nodata=grid.nodata)
-        watershed_dict = {st_id: []}
+            watershed = grid.polygonize(data=catch, nodata=grid.nodata)
+            watershed_dict = {st_id: []}
         
-        # Merging Multi-Part Watersheds
-        print("Merging Multi-Part Watersheds")
-        for shape, val in watershed:
-            if val != 0:
-                shp = Polygon(shape['coordinates'][0]).buffer(0.0001)
-                watershed_dict[st_id].append(shp)
+            # Merging Multi-Part Watersheds
+            print("    Merging Multi-Part Watersheds")
+            for shape, val in watershed:
+                if val != 0:
+                    shp = Polygon(shape['coordinates'][0]).buffer(0.0001)
+                    watershed_dict[st_id].append(shp)
         
-        merged = Polygon(unary_union(watershed_dict[st_id]).buffer(-0.0001))
-        new_shape = {'type': 'Polygon', 'coordinates': [tuple(merged.exterior.coords)]}
+            merged = Polygon(unary_union(watershed_dict[st_id]).buffer(-0.0001))
+            new_shape = {'type': 'Polygon', 'coordinates': [tuple(merged.exterior.coords)]}
 
-        print("Writing to shapefile")
-        file = f"{output_dir}/{output_fname}{st_id}.geojson"
-        # Specify schema
-        schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', id_field: 'str',
+            # Specify schema of shapefile
+            schema = {'geometry': 'Polygon', 'properties': {'LABEL': 'float:16', id_field: 'str',
                                                         'lat': 'float', 'lng': 'float',
                                                         'area': 'float'}}
-        if not (os.path.exists(file) and os.path.isfile(file)):
+
             # Write shapefile
-            with fiona.open(file, 'w',
+            print("    Writing to shapefile. File={}".format(filename))
+            with fiona.open(filename, 'w',
                             driver='GeoJSON',
                             crs=grid.crs.srs,
                             schema=schema) as c:
@@ -224,6 +246,9 @@ def delineate(fldir_file=FLDIR, flacc_file=FLACC, output_dir="output", output_fn
                 #     i += 1
                 #     print("check it")
                 #     print(st_id, shape)
+
+        else:
+            print("    >>>> Shapefile exists. Will not be overwritten. Delineation will be skipped. File={}".format(filename))
 
 
 #-------------------------------------------------------------------------------
